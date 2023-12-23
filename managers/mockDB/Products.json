@@ -1,0 +1,11 @@
+[
+  {
+    "title": "product1",
+    "description": "cartera de cuero",
+    "price": 15000,
+    "thumbail": "imagen",
+    "code": "abc01",
+    "stock": 30,
+    "id": 1
+  }
+]
