@@ -18,7 +18,6 @@ app.get('/api/products', async (req, res)=>{
     }
 })
 
-
 // Endpoint para solicitar un producto
 app.get('/api/products/:id', async (req, res)=>{        
     const { id } = req.params        

@@ -2,17 +2,12 @@
 const fs = require('node:fs')
 
 //creación de clase
-class ProductManager {
-    constructor (path) {
-        this.path = path
-        this.products = []
-    }
 
-/*   class ProductManager {                             corrección del profe
+class ProductManager {                             
         constructor () {
-            this.path = './mockDB/Products.json'
+            this.path = '../mockDB/Products.json'
             this.products = []
-        } */
+        } 
 
 
 //método para leer el archivo de productos
@@ -69,10 +64,10 @@ class ProductManager {
         try {
             const ProductsJson = await fs.promises.readFile (this.path)
             const ProductsJs = JSON.parse (ProductsJson)
-            return ProductsJs          //return ProductsJs
+            return ProductsJs          
 
         } catch (error) {
-            console.log(error)      //return new Error ("Not found products")
+            return new Error ("Not found products")
         }
     } 
 
@@ -181,10 +176,12 @@ const test = async () => {
     console.log(await products.addProduct(product4))
     console.log(await products.addProduct(product5))
     console.log(await products.getProducts())
-    //console.log(await products.getProductsById(7))
+    //console.log(await products.getProductsById(1))
     //console.log(await products.updateProduct(5, "price", 2300))
     //console.log(await products.deleteProduct(5))
 }
 
+test ()
+
 //exportación del módulo
-module.exports = ProductManager         //corrección del profe
+module.exports = ProductManager         
