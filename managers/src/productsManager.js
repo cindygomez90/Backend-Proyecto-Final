@@ -1,14 +1,19 @@
 //importación de los módulos a utilizar 
 const fs = require('node:fs')
-const { getPriority } = require('node:os')
-
 
 //creación de clase
 class ProductManager {
-    constructor () {
-        this.path = './mockDB/Products.json'
+    constructor (path) {
+        this.path = path
         this.products = []
     }
+
+/*   class ProductManager {                             corrección del profe
+        constructor () {
+            this.path = './mockDB/Products.json'
+            this.products = []
+        } */
+
 
 //método para leer el archivo de productos
     async readFileProducts(){                  
@@ -17,81 +22,84 @@ class ProductManager {
                 const ProductsData = await fs.promises.readFile(this.path, 'utf-8')    
                 const ProductsJs = await JSON.parse(ProductsData)                          
                 return ProductsJs
-            }        
+            }else {
+                return []
+            }   
+
         } catch (error) {
-            return []               
+            console.log ("Error en lectura de productos")               
         }
     }
-    
 
 //método para agregar un producto al array de productos inicial
-async addProduct(product){             
-    try {
-        const productsList = await this.readFileProducts ()
+    async addProduct(product){             
+        try {
+            const productsList = await this.readFileProducts ()
 
-        if (!product.title ||                   //validación que todos los campos sean obligatorios
-        !product.description ||
-        !product.price ||
-        !product.thumbail ||
-        !product.code ||
-        !product.stock)
-        {
-            return "Falta algún campo del producto"
-        }                 
+            //validación que todos los campos sean obligatorios
+            if (!product.title ||                   
+            !product.description ||
+            !product.price ||
+            !product.thumbail ||
+            !product.code ||
+            !product.stock)
+            {
+                return "Falta algún campo del producto"
+            }                 
 
-        const result = productsList.find (prod => prod.code === product.code)  //validación de campo code
-        if (result) {
-            return "Existe un producto con igual código"
+            //validación de campo code
+            const result = productsList.find (prod => prod.code === product.code)  
+            if (result) {
+                return "Existe un producto con igual código"
+            }
+
+            //creación de id autoincrementable al agregar producto
+            product.id = productsList.length ? productsList.length + 1 : 1
+            productsList.push(product)
+            await fs.promises.writeFile(this.path, JSON.stringify(productsList, null, 2))
+            return product
+                        
+        } catch (error) {
+            console.log(error)
         }
-
-       //creación de id autoincrementable al agregar producto
-        product.id = productsList.length ? productsList.length + 1 : 1
-        productsList.push(product)
-        await fs.promises.writeFile(this.path, JSON.stringify(productsList, null, 2))
-        return product
-        
-    } catch (error) {
-        console.log(error)
     }
-}
 
 //método para devolver array con los productos existentes
     async getProducts (){
         try {
             const ProductsJson = await fs.promises.readFile (this.path)
             const ProductsJs = JSON.parse (ProductsJson)
-            console.log (ProductsJs)
-            
+            return ProductsJs          //return ProductsJs
+
         } catch (error) {
-            console.log(error)
+            console.log(error)      //return new Error ("Not found products")
         }
-        
     } 
 
 //método para buscar en array producto por el id
     async getProductsById (id) {
         try {
-            await this.readFileProducts ()    
-            const buscarId = this.products.find (product => product.id === id)
+            const productsId = await this.readFileProducts ()
+            const buscarId = productsId.find (product => product.id === id)
             if (buscarId) {
                 return buscarId
             } else {
-                return "Not found"
+                return "Not found product"
         }
         } catch (error) {
             console.log(error)
         }
-        
     }
 
 //método para actualizar campo en archivo según id
     async updateProduct (id, price, newValue) {
         try {
             const datosActuales = await this.readFileProducts () 
-            const elemActualizar = datosActuales.find(product => product.id === id)
+            const elemActualizar = datosActuales.find (product => product.id === id)
             if (elemActualizar) {
-                elemActualizar [price] = newValue
-                await this.addProduct (datosActuales)
+                elemActualizar[price] = newValue
+                await fs.promises.writeFile(this.path, JSON.stringify(datosActuales, null, 2))
+                return elemActualizar
             } else {
                 console.log ("No se encontró el id indicado")
         }
@@ -115,9 +123,8 @@ async addProduct(product){
         } catch (error) {
             console.error(error);
         }
-        }
+    } 
 }
-
 
 //creación de productos 
 const product1 = {
@@ -174,12 +181,10 @@ const test = async () => {
     console.log(await products.addProduct(product4))
     console.log(await products.addProduct(product5))
     console.log(await products.getProducts())
-    console.log(await products.getProductsById(1))
-    console.log(await products.updateProduct(5, "price", 20000))
-    //console.log(await products.deleteProduct(1))
+    //console.log(await products.getProductsById(7))
+    //console.log(await products.updateProduct(5, "price", 2300))
+    //console.log(await products.deleteProduct(5))
 }
 
-test ()
-
 //exportación del módulo
-module.exports = getProducts
+module.exports = ProductManager         //corrección del profe
