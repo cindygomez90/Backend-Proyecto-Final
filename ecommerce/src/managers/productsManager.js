@@ -5,7 +5,7 @@ const fs = require('node:fs')
 
 class ProductManager {                             
         constructor () {
-            this.path = '../mockDB/Products.json'
+            this.path = '../../ecommerce/mockDB/Products.json'
             this.products = []
         } 
 
@@ -49,7 +49,7 @@ class ProductManager {
             }
 
             //creación de id autoincrementable al agregar producto
-            product.id = productsList.length ? productsList.length + 1 : 1
+            product.pid = productsList.length ? productsList.length + 1 : 1
             productsList.push(product)
             await fs.promises.writeFile(this.path, JSON.stringify(productsList, null, 2))
             return product
@@ -72,10 +72,10 @@ class ProductManager {
     } 
 
 //método para buscar en array producto por el id
-    async getProductsById (id) {
+    async getProductsById (pid) {
         try {
             const productsId = await this.readFileProducts ()
-            const buscarId = productsId.find (product => product.id === id)
+            const buscarId = productsId.find (product => product.pid === pid)
             if (buscarId) {
                 return buscarId
             } else {
@@ -86,11 +86,11 @@ class ProductManager {
         }
     }
 
-//método para actualizar campo en archivo según id
-    async updateProduct (id, price, newValue) {
+//método para actualizar campo del producto en archivo según id
+    async updateProduct (pid, price, newValue) {
         try {
             const datosActuales = await this.readFileProducts () 
-            const elemActualizar = datosActuales.find (product => product.id === id)
+            const elemActualizar = datosActuales.find (product => product.pid === pid)
             if (elemActualizar) {
                 elemActualizar[price] = newValue
                 await fs.promises.writeFile(this.path, JSON.stringify(datosActuales, null, 2))
@@ -104,10 +104,10 @@ class ProductManager {
     }
 
 //método para eliminar producto en archivo según id
-    async deleteProduct (id) {
+    async deleteProduct (pid) {
         try {
             const datosActuales = await this.readFileProducts();
-            const nvosDatos = datosActuales.filter((product) => product.id !== id);
+            const nvosDatos = datosActuales.filter((product) => product.pid !== pid);
         
             if (nvosDatos.length === datosActuales.length) {
             return "No se encontró producto con el id indicado";
@@ -170,12 +170,12 @@ const product5 = {
 
 const test = async () => {
     const products = new ProductManager()
-    console.log(await products.addProduct(product1))
-    console.log(await products.addProduct(product2))
-    console.log(await products.addProduct(product3))
-    console.log(await products.addProduct(product4))
-    console.log(await products.addProduct(product5))
-    console.log(await products.getProducts())
+    //console.log(await products.addProduct(product1))
+    //console.log(await products.addProduct(product2))
+    //console.log(await products.addProduct(product3))
+    //console.log(await products.addProduct(product4))
+    //console.log(await products.addProduct(product5))
+    //console.log(await products.getProducts())
     //console.log(await products.getProductsById(1))
     //console.log(await products.updateProduct(5, "price", 2300))
     //console.log(await products.deleteProduct(5))
