@@ -1,14 +1,13 @@
 //importación de los módulos a utilizar 
-const fs = require('node:fs')
+const fs = require ('node:fs')
 
 //creación de clase
 
 class ProductManager {                             
-        constructor () {
-            this.path = '../../ecommerce/mockDB/Products.json'
+        constructor (path) {
+            this.path = path
             this.products = []
         } 
-
 
 //método para leer el archivo de productos
     async readFileProducts(){                  

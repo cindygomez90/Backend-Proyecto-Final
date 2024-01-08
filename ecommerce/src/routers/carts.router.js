@@ -1,7 +1,8 @@
 //importación de módulos
 const { Router } = require ("express")
-const CartsManager = require ('../../src/managers/cartsManager.js')
-const cartsService = new CartsManager
+const path = require("node:path")
+const CartsManager = require("../managers/cartsManager.js")
+const cartsService = new CartsManager (path.join(__dirname, "../../mockDB/Carts.json"))
 
 const cartsRouter = Router ()
 const carts = []

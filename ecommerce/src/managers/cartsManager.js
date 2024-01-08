@@ -4,9 +4,10 @@ const fs = require ('node:fs/promises')
 //creación de clase
 
 class CartsManager {
-    constructor () {
-        this.path = '../../ecommerce/mockDB/Carts.json'
+    constructor (path) {
+        this.path = path
     }
+
 
 //método para leer el archivo de carritos
     async readFileCarts () {

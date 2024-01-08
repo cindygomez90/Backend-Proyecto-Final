@@ -1,18 +1,19 @@
 //importación de módulos
 const { Router } = require ("express")
-const ProductManager = require ('../../src/managers/productsManager.js')
-const productManager = new ProductManager(__dirname + '../../ecommerce/mockDB/Products.json')
+const path = require ("node:path")
+const ProductManager = require("../managers/productsManager.js")
+const productManager = new ProductManager(path.join(__dirname, "../../mockDB/Products.json"))
 
 const productsRouter = Router ()
 
 //MÉTODO GET
 
-//Endpoint para solicitar todos los productos y soporte para recibir parámetro de límite=3
+//Endpoint para solicitar todos los productos y soporte para recibir parámetro de límite
 productsRouter.get('/', async (req, res)=>{  
     const {limit} = req.query
     try {
         const products = await productManager.getProducts()
-        const limitedProducts = limit ? products.slice(0, parseInt(limit, 3)) : products
+        const limitedProducts = limit ? products.slice(0, parseInt(limit, 10)) : products
         res.send({ products: limitedProducts })
     } catch (error) {
         res.status(500).send("Error al obtener los productos")
