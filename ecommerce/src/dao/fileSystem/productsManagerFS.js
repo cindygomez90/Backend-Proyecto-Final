@@ -1,11 +1,12 @@
 //importación de los módulos a utilizar 
 const fs = require ('node:fs')
+const path = require ('path')
 
 //creación de clase
 
 class ProductManager {                             
-        constructor (path) {
-            this.path = path
+        constructor () {
+            this.path = path.resolve (__dirname,'../../../mockDB/Products.json')
             this.products = []
         } 
 
@@ -169,12 +170,12 @@ const product5 = {
 
 const test = async () => {
     const products = new ProductManager()
-    //console.log(await products.addProduct(product1))
-    //console.log(await products.addProduct(product2))
-    //console.log(await products.addProduct(product3))
-    //console.log(await products.addProduct(product4))
-    //console.log(await products.addProduct(product5))
-    //console.log(await products.getProducts())
+    console.log(await products.addProduct(product1))
+    console.log(await products.addProduct(product2))
+    console.log(await products.addProduct(product3))
+    console.log(await products.addProduct(product4))
+    console.log(await products.addProduct(product5))
+    console.log(await products.getProducts())
     //console.log(await products.getProductsById(1))
     //console.log(await products.updateProduct(5, "price", 2300))
     //console.log(await products.deleteProduct(5))

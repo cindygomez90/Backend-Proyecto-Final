@@ -1,15 +1,18 @@
 //importación de módulos
 const { Router } = require ("express")
-const path = require ("node:path")
-const ProductManager = require("../managers/productsManager.js")
-const productManager = new ProductManager(path.join(__dirname, "../../mockDB/Products.json"))
+//const path = require ("node:path")
+//const ProductManager = require("../dao/fileSystem/productsManagerFS")
+//const productManager = new ProductManager(path.join(__dirname, "../../mockDB/Products.json"))
+const { productModel} = require ("../dao/models/products.model")
 
 const productsRouter = Router ()
 
+//armado de CRUD para productos
+
 //MÉTODO GET
 
-//Endpoint para solicitar todos los productos y soporte para recibir parámetro de límite
-productsRouter.get('/', async (req, res)=>{  
+//FS - Endpoint para solicitar todos los productos y soporte para recibir parámetro de límite
+/*productsRouter.get('/', async (req, res)=>{  
     const {limit} = req.query
     try {
         const products = await productManager.getProducts()
@@ -18,11 +21,23 @@ productsRouter.get('/', async (req, res)=>{
     } catch (error) {
         res.status(500).send("Error al obtener los productos")
     }
+})*/
+
+//Mongo - Endpoint para solicitar todos los productos
+productsRouter.get('/', async (req, res)=>{  
+    try {
+        const products = await productModel.find({isActive: true}) 
+        res.json({
+            status: 'success',
+            result: products
+        })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
-
-//Endpoint para solicitar un producto por id
-productsRouter.get('/:pid', async (req, res)=>{        
+//FS - Endpoint para solicitar un producto por id
+/*productsRouter.get('/:pid', async (req, res)=>{        
     const { pid } = req.params        
     const productsList = await productManager.getProducts()
     const product = productsList.find(prod => prod.pid === Number(pid)) 
@@ -31,12 +46,30 @@ productsRouter.get('/:pid', async (req, res)=>{
     } else {
         res.status(404).send('No se encuentra el id del producto solicitado')
     }
+}) */
+
+//Mongo - Endpoint para solicitar un producto por id
+productsRouter.get('/:pid', async (req, res)=>{  
+    try {      
+        const { pid } = req.params        
+        const product = await productModel.findOne ({_id: pid})
+        res.json({
+            status: 'success',
+            result: product
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al obtener el producto por ID.'
+        })
+    }
 }) 
 
 //MÉTODO POST
 
-//Endpoint para agregar un nuevo producto
-productsRouter.post ('/', async (req, res)=> {
+//FS - Endpoint para agregar un nuevo producto
+/*productsRouter.post ('/', async (req, res)=> {
     const product = req.body
 
     if (product.title) {
@@ -75,12 +108,28 @@ productsRouter.post ('/', async (req, res)=> {
         productsList
     })
     }
+})*/
+
+//Mongo - Endpoint para agregar un nuevo producto
+productsRouter.post('/', async (request, responses)=>{                
+    try {                               
+        const { body } = request
+        const result = await productModel.create(body)
+
+        responses.send({
+            status: 'success',
+            result
+        })
+    } catch (error) {
+        console.log(error)
+    }
 })
+
 
 //MÉTODO PUT
 
-//Endpoint para actualizar campos de un producto por id
-productsRouter.put('/:pid', async (req, res) => {
+//FS - Endpoint para actualizar campos de un producto por id
+/*productsRouter.put('/:pid', async (req, res) => {
     const { pid } = req.params
     const { price, stock } = req.body
     const productsList = await productManager.getProducts()
@@ -102,18 +151,45 @@ productsRouter.put('/:pid', async (req, res) => {
         status: 'success',
         message: 'Producto actualizado'
     })
-})
+})*/
 
+//Mongo - Endpoint para actualizar campos de un producto por id
+productsRouter.put('/:pid', async (req, res)=>{
+    try {
+    const { pid } = req.params
+    const productToUpdate = req.body
+    const product = await productModel.findOneAndUpdate({_id: pid}, productToUpdate, {new: true})
+    
+    res.status(200).send({
+        status: 'success',
+        message: product
+    })
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 //MÉTODO DELETE
 
-//Endpoint para eliminar un producto po id
-productsRouter.delete('/:pid', async (req, res)=>{    
+//FS - Endpoint para eliminar un producto po id
+/*productsRouter.delete('/:pid', async (req, res)=>{    
     const {pid} = req.params         
     const productsList = await productManager.getProducts()
     const productsListAct = productsList.filter(prod => prod.pid !== parseInt(pid))    
     res.send(productsListAct)     
-}) 
+}) */
+
+//Mongo - Endpoint para eliminar un producto po id
+productsRouter.delete('/:pid', async (request, responses)=>{
+    try {
+        const {pid} = request.params
+        const result = await productModel.findByIdAndUpdate({_id:pid}, {isActive: false})  
+        responses.send(result)
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 
 module.exports = productsRouter
+

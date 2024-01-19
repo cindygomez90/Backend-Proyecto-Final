@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+</head>
+<body>
+    <h1>Bienvenidos a nuestra tienda online!</h1>
+    <h2>Lista de Productos</h2>
+        <ul id="productList">
+        {{#each products}}
+            <li>Nombre: {{this.title}} <br>
+                Descripción: {{this.description}}<br>
+                Precio: {{this.price}}<br>
+                Imagen: {{this.thumbail}}<br>
+                Código: {{this.code}}<br>
+                Stock: {{this.stock}}</li>
+        {{/each}}
+        </ul>
+</body>
+</html>
+
+
+
