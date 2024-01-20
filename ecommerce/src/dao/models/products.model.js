@@ -9,11 +9,7 @@ const productsSchema = new mongoose.Schema({
     price: Number,
     thumbail: String,
     code: String,
-    stock: Number,
-    isActive: {
-        type: Boolean,
-        default: true
-    } 
+    stock: Number
 }) 
 
 const productModel = mongoose.model(productsCollection, productsSchema) 

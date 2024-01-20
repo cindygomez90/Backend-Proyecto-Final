@@ -3,7 +3,7 @@ const { Router } = require ("express")
 //const path = require ("node:path")
 //const ProductManager = require("../dao/fileSystem/productsManagerFS")
 //const productManager = new ProductManager(path.join(__dirname, "../../mockDB/Products.json"))
-const { productModel} = require ("../dao/models/products.model")
+const { productModel } = require ("../dao/models/products.model")
 
 const productsRouter = Router ()
 
@@ -26,7 +26,7 @@ const productsRouter = Router ()
 //Mongo - Endpoint para solicitar todos los productos
 productsRouter.get('/', async (req, res)=>{  
     try {
-        const products = await productModel.find({isActive: true}) 
+        const products = await productModel.find({}) 
         res.json({
             status: 'success',
             result: products
@@ -180,13 +180,28 @@ productsRouter.put('/:pid', async (req, res)=>{
 }) */
 
 //Mongo - Endpoint para eliminar un producto po id
-productsRouter.delete('/:pid', async (request, responses)=>{
+/*productsRouter.delete('/:pid', async (request, responses)=>{
     try {
         const {pid} = request.params
-        const result = await productModel.findByIdAndUpdate({_id:pid}, {isActive: false})  
+        const result = await productModel.findByIdAndDelete({_id:pid})  
         responses.send(result)
     } catch (error) {
         console.log(error)
+    }
+})*/
+productsRouter.delete('/:pid', async (request, responses) => {
+    try {
+        const { pid } = request.params;
+        const result = await productModel.findByIdAndDelete(pid);
+
+        if (!result) {
+            return responses.status(404).json({ success: false, message: 'Producto no encontrado.' });
+        }
+
+        responses.json({ success: true, message: 'Producto eliminado correctamente.' });
+    } catch (error) {
+        console.log(error);
+        responses.status(500).json({ success: false, message: 'Error al eliminar el producto.' });
     }
 })
 

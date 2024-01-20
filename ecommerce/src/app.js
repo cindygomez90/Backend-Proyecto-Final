@@ -2,11 +2,13 @@
 const express = require ("express")
 const handlebars  = require('express-handlebars')
 const { Server }  = require('socket.io') 
-const ProductManager = require("./dao/fileSystem/productsManagerFS.js")
-const productManager = new ProductManager()
+//const ProductManager = require("./dao/fileSystem/productsManagerFS.js")
+const ProductManagerMongo = require("./dao/Mongo/productsManagerMongo.js")
+//const productManager = new ProductManager()
+const productManager = new ProductManagerMongo()
 const router = require ("./routers/index.js")
 const messageModel = require ("./dao/models/messages.model.js")
-
+const productModel = require ("./dao/models/products.model.js")
 const connectBD = require ("./config/connectDB.js")
 
 const app = express()
@@ -42,8 +44,9 @@ let messages = []
 
 io.on('connection', async (socket) => {
     console.log('cliente conectado')
-    
-    socket.on("addProduct", async (data) => {
+
+//FS
+/*  socket.on("addProduct", async (data) => {
         const newProduct = {
             title: data.title,
             description: data.description,
@@ -63,7 +66,42 @@ io.on('connection', async (socket) => {
         await productManager.deleteProduct(parseInt(pid))
         const updatedProducts = await productManager.getProducts()
         io.emit("updateProducts", updatedProducts)
-        })
+        })*/
+
+//Mongo
+    socket.on("addProduct", async (data) => {
+        const newProduct = {
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            thumbail: data.thumbail,
+            code: data.code,
+            stock: data.stock,            
+        }
+        try {
+            await productManager.createProduct(newProduct)
+
+            const updatedProducts = await productManager.getProducts()
+            io.emit("updateProducts", updatedProducts)
+        } catch (error) {
+            console.error("Error al agregar producto:", error)
+        }
+    })
+        
+    socket.on("deleteProduct", async (data) => {
+        const pid = data.pid
+
+        try {
+            await productManager.deleteProduct(pid)
+
+            const updatedProducts = await productManager.getProducts()
+            io.emit("updateProducts", updatedProducts)
+        } catch (error) {
+            console.error("Error al eliminar producto:", error)
+        }
+    })
+
+
 
     socket.on('message', async (data) => {
         try {

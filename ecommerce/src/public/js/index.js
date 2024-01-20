@@ -16,10 +16,21 @@ function addProduct() {
     }
 
     socket.emit("addProduct", { title, description, price, thumbail, code, stock})
+
+    document.getElementById("title").value = ""
+    document.getElementById("description").value = ""
+    document.getElementById("price").value = ""
+    document.getElementById("thumbail").value = ""
+    document.getElementById("code").value = ""
+    document.getElementById("stock").value = ""
 }
 
-function deleteProduct(pid) {
+/*function deleteProduct(pid) {
     socket.emit("deleteProduct", {pid})
+}*/
+
+function deleteProduct(productId) {
+    socket.emit("deleteProduct", { pid: productId });
 }
 
 socket.on("updateProducts", (data) => {
@@ -29,12 +40,11 @@ socket.on("updateProducts", (data) => {
 const productList = document.getElementById("productList")
 
 if (productList && Array.isArray(data)) {
-    productList.innerHTML = ""
+    productList.innerHTML = "";
     
     data.forEach((product) => {
     const productContainer = document.createElement("li")
         productContainer.innerHTML = `   
-        <li>   
         Nombre: ${product.title}<br>
         Descripción: ${product.description}<br>
         Precio: ${product.price}<br>
@@ -42,8 +52,7 @@ if (productList && Array.isArray(data)) {
         Código: ${product.code}<br>
         Stock: ${product.stock}<br>
         
-        <button type="button" onclick="deleteProduct('${product.pid}')">Eliminar</button>
-        </li>
+        <button type="button" class="boton-eliminar" onclick="deleteProduct('${product._id}')">Eliminar</button>
         `;
         productList.appendChild(productContainer);
     })

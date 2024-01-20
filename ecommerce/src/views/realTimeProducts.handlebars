@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css">
     <title>realTimeProducts</title>
 </head>
 <body>
@@ -30,8 +31,8 @@
                 <label for="stock">Stock:</label>
                 <input type="number" id="stock" required>    
                 
-                    <input value="Agregar" type="submit" id="boton-agregar" onclick="addProduct()">
-                </li>
+                <input value="Agregar" type="submit" id="boton-agregar">
+
             </form>
         </div>
         
@@ -45,7 +46,7 @@
                         Imagen: {{this.thumbail}}<br>
                         Código: {{this.code}}<br>
                         Stock: {{this.stock}}<br> 
-                        <button type="button" class="boton-eliminar" onclick="deleteProduct('{{this.pid}}')">Eliminar</button>
+                        <button type="button" class="boton-eliminar" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
                     </li>
                 {{/each}}
             </ul>
