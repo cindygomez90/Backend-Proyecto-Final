@@ -16,6 +16,7 @@ h1{
 li{
     padding: 10px;
     margin: 3px;
+    list-style-type: none;
 }
 
 #boton-agregar{
@@ -36,4 +37,24 @@ li{
 #boton-agregar:hover{
     font-size: 16px;
     font-weight: bolder;
+}
+
+li img {
+    width: 150px; 
+    height: auto; 
+}
+
+
+.pag-link {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 30 20px;
+    background-color: #007BFF; 
+    color: #fff; 
+    border-radius: 5px; 
+}
+
+.pag-actual {
+    font-size: 20px; 
+    margin: 0 10px;
 }

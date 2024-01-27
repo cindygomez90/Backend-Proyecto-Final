@@ -2,14 +2,9 @@
 const { Router } = require ("express")
 const viewsRouter = Router()
 const { productModel} = require ("../dao/models/products.model")
+const { cartModel } = require ("../dao/models/carts.model")
 const messageModel = require ("../dao/models/messages.model")
 
-//const products = require('../../mockDB/Products.json')
-
-//FS - ruta para home.handlebars
-/*viewsRouter.get('/home', (req, res) => {
-    res.render('home', { products })
-})*/
 
 //Mongo - ruta para home.handlebars
 viewsRouter.get('/home', async (req, res) => {
@@ -22,25 +17,6 @@ viewsRouter.get('/home', async (req, res) => {
     }
 })
 
-//FS - ruta para realTimeProducts.handlebars
-/*viewsRouter.get('/realtimeproducts', async (req, res) => {
-    try {
-        res.render('realTimeProducts', { products });
-    } catch (error) {
-        console.log(error);
-        res.render('error', { message: 'Error al intentar obtener la lista de productos.' })
-    }
-})
-
-viewsRouter.post('/', async (req, res) => {
-    try {
-        res.render('realTimeProducts', { products })
-    } catch (error) {
-        console.log(error);
-        res.render("Error al intentar obtener la lista de productos");
-        return
-    }
-})*/
 
 //Mongo - ruta para realTimeProducts.handlebars
 viewsRouter.get('/realtimeproducts', async (req, res) => {
@@ -83,6 +59,57 @@ viewsRouter.post('/api/messages/sendMessage', async (req, res) => {
     } catch (error) {
         console.error('Error al enviar el mensaje:', error);
         res.render('error', { message: 'Error al intentar enviar el mensaje.' });
+    }
+})
+
+//ruta para products.handlebars
+viewsRouter.get('/products', async (req, res) => {    
+    const {limit = 10, pageQuery = 1, category, order, status} = req.query   
+    
+    const filter = {}
+        if (category) {
+            filter.category = category;
+        }
+    
+        if (status !== undefined) {
+            filter.status = status === 'true' ? true : status === 'false' ? false : undefined
+        }
+
+    const sortOptions = {}
+    if (order === 'asc') {
+        sortOptions.price = 1
+    } else {
+        sortOptions.price = -1
+    }
+    
+    const {     
+    docs,
+    hasPrevPage, 
+    hasNextPage,
+    prevPage, 
+    nextPage,
+    page 
+    } = await productModel.paginate(filter, {limit, page: pageQuery, sort: sortOptions, lean: true})
+    res.render('products', {
+        products: docs,
+        hasPrevPage, 
+        hasNextPage,
+        prevPage, 
+        nextPage,
+        page 
+    })
+})
+
+
+//ruta para cart.handlebars
+viewsRouter.get('/carts/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        const cart = await cartModel.findOne ({_id: cid})
+        res.render('cart', { cart })
+    } catch (error) {
+        console.error(error)
+        res.render('error', { message: 'Error al obtener detalle del carrito.' })
     }
 })
 

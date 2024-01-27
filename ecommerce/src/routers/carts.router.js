@@ -1,30 +1,13 @@
 //importación de módulos
 const { Router } = require ("express")
-//const path = require("node:path")
-//const CartsManager = require("../dao/fileSystem/cartsManagerFS")
-//const cartsService = new CartsManager (path.join(__dirname, "../../mockDB/Carts.json"))
 const { cartModel } = require ("../dao/models/carts.model")
 const { productModel } = require ("../dao/models/products.model")
 
 const cartsRouter = Router ()
-//const carts = []
 
+//armado de CRUD para carts
 
 //MÉTODO GET
-
-//FS - Endpoint para solicitar un carrito por id
-/*cartsRouter.get ('/:cid', async (req, res) => {
-    try {
-        const {cid} = req.params
-        const cart = await cartsService.getCartById (parseInt(cid)) 
-        res.send ({
-            status: "succes", 
-            payload: cart
-        })
-    } catch (error) {
-        console.log (error)
-        }
-})*/
 
 //Mongo - Endpoint para solicitar un carrito por id
 cartsRouter.get ('/:cid', async (req, res) => {
@@ -43,49 +26,23 @@ cartsRouter.get ('/:cid', async (req, res) => {
 
 //MÉTODO POST
 
-//FS - Endpoint para crear un carrito
-/*cartsRouter.post ('/', async (req, res)=> {
-    try {
-        const result = await cartsService.createCart ()
-        res.send ({
-            status: "succes",
-            payload: result
-        })
-    } catch (error) {
-        res.status (500).send ("Error de server")
-        }
-    })*/
-
 //Mongo - Endpoint para crear un carrito
 cartsRouter.post ('/', async (req, res)=> {
     try {
         const result = await cartModel.create({ products:[] })
 
-        res.status(200).send ({
+        res.status(200).json ({
             status: "succes",
             payload: result
         })
     } catch (error) {
         console.error('Error al crear el carrito:', error)
-        res.status (500).send ("Error al crear el carrito")
+        res.status(500).json ("Error al crear el carrito")
         }
     })
 
-//FS - Endpoint para agregar producto a un carrito
-/*cartsRouter.post ('/:cid/products/:pid', async (req, res)=> {       
-    try {
-        const {cid, pid} = req.params
-        const result = await cartsService.addProductToCart (Number(cid), Number(pid))
-            res.send ({
-                status: "succes",
-                payload:  result
-            })
-    } catch (error) {
-        console.log (error)
-        }       
-    })*/
 
-//Mongo - Endpoint para agregar producto a un carrito
+//Mongo - Endpoint para agregar un producto a un carrito
 cartsRouter.post('/:cid/products/:pid', async (req, res) => {
     try {
         const { cid, pid } = req.params        
@@ -120,6 +77,154 @@ cartsRouter.post('/:cid/products/:pid', async (req, res) => {
         res.status(500).json({
             status: 'error',
             message: 'Error al agregar el producto al carrito',
+        })
+    }
+})
+
+//MÉTODO PUT
+
+//Mongo - Endpoint para actualizar el carrito con un arreglo de productos
+cartsRouter.put('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params
+        const newProducts = req.body
+        const cart = await cartModel.findOne({ _id: cid })
+
+        if (!cart) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el carrito indicado',
+            })
+        }
+        
+        cart.products = newProducts
+        await cart.save()
+
+        res.json({
+            status: 'success',
+            payload: cart,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al actualizar el carrito',
+        })
+    }
+})
+
+
+//Mongo - Endpoint para actualizar solo la cantidad de un producto en el carrito
+cartsRouter.put('/:cid/products/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params
+        const { quantity } = req.body
+
+        const cart = await cartModel.findOne({ _id: cid })
+
+        if (!cart) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el carrito indicado',
+            })
+        }
+
+        const product = cart.products.find((p) => p.product.equals(pid))
+
+        if (!product) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el producto indicado en el carrito',
+            });
+        }
+
+        product.quantity = quantity
+        await cart.save()
+
+        res.json({
+            status: 'success',
+            payload: cart,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al actualizar la cantidad del producto',
+        })
+    }
+})
+
+
+//MÉTODO DELETE
+
+//Mongo - Endpoint para eliminar un producto de un carrito
+cartsRouter.delete('/:cid/products/:pid', async (req, res) => {
+    try {
+        const { cid, pid } = req.params
+        const cart = await cartModel.findOne({ _id: cid })
+
+        if (!cart) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el carrito indicado',
+            })
+        }
+
+        const productIndex = cart.products.findIndex(
+            (product) => product.product.equals(pid)
+        )
+
+        if (productIndex === -1) {
+            console.log('Productos en el carrito:', cart.products)
+
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el producto indicado en el carrito',
+            })
+        }
+        
+        cart.products.splice(productIndex, 1)
+
+        await cart.save()
+
+        res.json({
+            status: 'success',
+            payload: cart,
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al eliminar el producto del carrito',
+        })
+    }
+})
+
+//Mongo - Endpoint para eliminar todos los productos de un carrito
+cartsRouter.delete('/:cid', async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const cart = await cartModel.findOne({ _id: cid })
+
+        if (!cart) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No se encuentra el carrito indicado',
+            });
+        }
+
+        cart.products = []
+        await cart.save()
+
+        res.json({
+            status: 'success',
+            message: 'Se eliminaron todos los productos del carrito',
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Error al eliminar todos los productos del carrito',
         })
     }
 })

@@ -30,6 +30,9 @@
                 
                 <label for="stock">Stock:</label>
                 <input type="number" id="stock" required>    
+
+                <label for="category">Categoría:</label>
+                <input type="text" id="category" required>
                 
                 <input value="Agregar" type="submit" id="boton-agregar">
 
@@ -40,12 +43,15 @@
             <h3>Lista de productos actualizada</h3>
             <ul id="productList">
                 {{#each products}}
-                    <li>Nombre: {{this.title}} <br>
+                    <li>
+                        <img src="{{this.thumbnail}}" alt="Imagen del Producto"><br>
+                        Nombre: {{this.title}} <br>
                         Descripción: {{this.description}}<br>
-                        Precio: {{this.price}}<br>
-                        Imagen: {{this.thumbail}}<br>
+                        Precio: {{this.price}}<br>                       
                         Código: {{this.code}}<br>
-                        Stock: {{this.stock}}<br> 
+                        Stock: {{this.stock}}<br>
+                        Categoría: {{this.category}}<br>
+                        
                         <button type="button" class="boton-eliminar" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
                     </li>
                 {{/each}}

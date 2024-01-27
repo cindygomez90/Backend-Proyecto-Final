@@ -10,12 +10,15 @@
     <h2>Lista de Productos</h2>
         <ul id="productList">
         {{#each products}}
-            <li>Nombre: {{this.title}} <br>
+            <li>
+                <img src="{{this.thumbnail}}" alt="Imagen del Producto"><br>
+                Nombre: {{this.title}} <br>
                 Descripción: {{this.description}}<br>
-                Precio: {{this.price}}<br>
-                Imagen: {{this.thumbail}}<br>
+                Precio: {{this.price}}<br>                
                 Código: {{this.code}}<br>
-                Stock: {{this.stock}}</li>
+                Stock: {{this.stock}}<br>
+                Categoría: {{this.category}}
+            </li>
         {{/each}}
         </ul>
 </body>
