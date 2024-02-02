@@ -1,7 +1,8 @@
 //importación de módulos
 const { Router } = require ("express")
-const { productModel } = require ("../dao/models/products.model")
-
+const ProductManagerMongo = require ('../dao/Mongo/productsManagerMongo')
+const productService = new ProductManagerMongo ()
+const { productModel} = require ("../dao/models/products.model")
 const productsRouter = Router ()
 
 //armado de CRUD para productos
@@ -9,15 +10,54 @@ const productsRouter = Router ()
 //MÉTODO GET
 
 //Mongo - Endpoint para solicitar todos los productos
-productsRouter.get('/', async (req, res)=>{  
+productsRouter.get('/', async (req, res) => {
     try {
-        const products = await productModel.find({}) 
+        const { limit = 10, pageQuery = 1, category, order, status } = req.query
+
+        const filter = {};
+        if (category) {
+            filter.category = category;
+        }
+
+        if (status !== undefined) {
+            filter.status = status === 'true' ? true : status === 'false' ? false : undefined
+        }
+
+        const sortOptions = {};
+        if (order === 'asc') {
+            sortOptions.price = 1
+        } else {
+            sortOptions.price = -1
+        }
+
+        const {
+            docs,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage,
+            page,
+            totalPages,
+        } = await productModel.paginate(filter, { limit, page: pageQuery, sort: sortOptions, lean: true })
+
         res.json({
             status: 'success',
-            result: products
+            result: {
+                products: docs,
+                totalPages: totalPages,
+                hasPrevPage,
+                hasNextPage,
+                prevPage,
+                nextPage,
+                page,
+            },
         })
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).json({
+            status: 'error',
+            error: error.message,
+        })
     }
 })
 
@@ -26,7 +66,7 @@ productsRouter.get('/', async (req, res)=>{
 productsRouter.get('/:pid', async (req, res)=>{  
     try {      
         const { pid } = req.params        
-        const product = await productModel.findOne ({_id: pid})
+        const product = await productService.getProduct (pid)
         res.json({
             status: 'success',
             result: product
@@ -46,7 +86,7 @@ productsRouter.get('/:pid', async (req, res)=>{
 productsRouter.post('/', async (request, responses)=>{                
     try {                               
         const { body } = request
-        const result = await productModel.create(body)
+        const result = await productService.createProduct (productNew)
 
         responses.send({
             status: 'success',
@@ -65,7 +105,7 @@ productsRouter.put('/:pid', async (req, res)=>{
     try {
     const { pid } = req.params
     const productToUpdate = req.body
-    const product = await productModel.findOneAndUpdate({_id: pid}, productToUpdate, {new: true})
+    const product = await productService.updateProduct (pid, productToUpdate)
     
     res.status(200).send({
         status: 'success',
@@ -81,7 +121,7 @@ productsRouter.put('/:pid', async (req, res)=>{
 productsRouter.delete('/:pid', async (request, responses) => {
     try {
         const { pid } = request.params
-        const result = await productModel.findByIdAndUpdate(pid, {status: false} )
+        const result = await productService.deleteProduct (pid)
 
         if (!result) {
             return responses.status(404).json({ success: false, message: 'Producto no encontrado.' })

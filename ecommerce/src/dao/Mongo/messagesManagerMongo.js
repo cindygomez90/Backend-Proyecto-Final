@@ -12,7 +12,7 @@ class MessageManagerMongo {
         }
     }    
     
-    async saveMessage(user, message) {
+    async saveMessage (user, message) {
         try {
             const result = await messageModel.create({ user, message })
             return result

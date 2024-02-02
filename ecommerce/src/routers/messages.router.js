@@ -1,5 +1,6 @@
 const { Router } = require ("express")
-const messageModel = require ("../dao/models/messages.model")
+const MessageManagerMongo = require ('../dao/Mongo/messagesManagerMongo')
+const messageService = new MessageManagerMongo ()
 const messagesRouter = Router ()
 
 
@@ -10,7 +11,7 @@ messagesRouter.use(bodyParser.urlencoded({ extended: true }))
 //Mongo - Endpoint para obtener todos los mensajes
 messagesRouter.get('/', async (request, responses)=>{
     try {
-        const messages = await messageModel.find({})    
+        const messages = await messageService.getMessages()    
         responses.json({
             status: 'success',
             result: messages
@@ -30,7 +31,7 @@ messagesRouter.get('/', async (request, responses)=>{
 messagesRouter.post('/', async (req, res) => {
     try {
         const { user, message } = req.body
-        const result = await messageModel.create({ user, message })
+        const result = await messageService.saveMessage (user, message)
         
         res.json({
             status: 'success',

@@ -1,7 +1,9 @@
 //importación de módulos
 const { Router } = require ("express")
-const { cartModel } = require ("../dao/models/carts.model")
-const { productModel } = require ("../dao/models/products.model")
+const CartsManagerMongo = require ('../dao/Mongo/cartsManagerMongo')
+const cartService = new CartsManagerMongo ()
+const ProductManagerMongo = require ('../dao/Mongo/productsManagerMongo')
+const productService = new ProductManagerMongo ()
 
 const cartsRouter = Router ()
 
@@ -13,7 +15,7 @@ const cartsRouter = Router ()
 cartsRouter.get ('/:cid', async (req, res) => {
     try {
         const {cid} = req.params
-        const cart = await cartModel.findOne ({_id: cid}) 
+        const cart = await cartService.getCart (cid) 
         res.send ({
             status: "succes", 
             payload: cart
@@ -29,7 +31,7 @@ cartsRouter.get ('/:cid', async (req, res) => {
 //Mongo - Endpoint para crear un carrito
 cartsRouter.post ('/', async (req, res)=> {
     try {
-        const result = await cartModel.create({ products:[] })
+        const result = await cartService.createCart ()
 
         res.status(200).json ({
             status: "succes",
@@ -46,7 +48,7 @@ cartsRouter.post ('/', async (req, res)=> {
 cartsRouter.post('/:cid/products/:pid', async (req, res) => {
     try {
         const { cid, pid } = req.params        
-        const cart = await cartModel.findOne ({_id: cid})
+        const cart = await cartService.getCart(cid)
 
         if (!cart) {
             return res.status(404).json({
@@ -55,7 +57,7 @@ cartsRouter.post('/:cid/products/:pid', async (req, res) => {
             })
         }
 
-        const product = await productModel.findOne({_id: pid})
+        const product = await productService.getProduct (pid)
         if (!product) {
             return res.status(404).json({
                 status: 'error',
@@ -88,7 +90,7 @@ cartsRouter.put('/:cid', async (req, res) => {
     try {
         const { cid } = req.params
         const newProducts = req.body
-        const cart = await cartModel.findOne({ _id: cid })
+        const cart = await cartService.getCart(cid)
 
         if (!cart) {
             return res.status(404).json({
@@ -120,7 +122,7 @@ cartsRouter.put('/:cid/products/:pid', async (req, res) => {
         const { cid, pid } = req.params
         const { quantity } = req.body
 
-        const cart = await cartModel.findOne({ _id: cid })
+        const cart = await cartService.getCart(cid)
 
         if (!cart) {
             return res.status(404).json({
@@ -161,7 +163,7 @@ cartsRouter.put('/:cid/products/:pid', async (req, res) => {
 cartsRouter.delete('/:cid/products/:pid', async (req, res) => {
     try {
         const { cid, pid } = req.params
-        const cart = await cartModel.findOne({ _id: cid })
+        const cart = await cartService.getCart(cid)
 
         if (!cart) {
             return res.status(404).json({
@@ -204,7 +206,7 @@ cartsRouter.delete('/:cid/products/:pid', async (req, res) => {
 cartsRouter.delete('/:cid', async (req, res) => {
     try {
         const { cid } = req.params;
-        const cart = await cartModel.findOne({ _id: cid })
+        const cart = await cartService.getCart(cid)
 
         if (!cart) {
             return res.status(404).json({

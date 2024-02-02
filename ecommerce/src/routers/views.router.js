@@ -1,15 +1,18 @@
 //importación de módulos
 const { Router } = require ("express")
 const viewsRouter = Router()
+const CartsManagerMongo = require ('../dao/Mongo/cartsManagerMongo')
+const cartService = new CartsManagerMongo ()
+const ProductManagerMongo = require ('../dao/Mongo/productsManagerMongo')
+const productService = new ProductManagerMongo ()
+const MessageManagerMongo = require ('../dao/Mongo/messagesManagerMongo')
+const messageService = new MessageManagerMongo ()
 const { productModel} = require ("../dao/models/products.model")
-const { cartModel } = require ("../dao/models/carts.model")
-const messageModel = require ("../dao/models/messages.model")
-
 
 //Mongo - ruta para home.handlebars
 viewsRouter.get('/home', async (req, res) => {
     try {
-        const products = await productModel.find ({})
+        const products = await productService.getProducts()
         res.render('home', { products })
     } catch (error) {
         console.error(error)
@@ -21,7 +24,7 @@ viewsRouter.get('/home', async (req, res) => {
 //Mongo - ruta para realTimeProducts.handlebars
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     try {
-        const products = await productModel.find ({})
+        const products = await productService.getProducts()
         res.render('realTimeProducts', { products });
     } catch (error) {
         console.log(error);
@@ -31,7 +34,7 @@ viewsRouter.get('/realtimeproducts', async (req, res) => {
 
 viewsRouter.post('/', async (req, res) => {
     try {
-        const products = await productModel.find ({})
+        const products = await productService.getProducts()
         res.render('realTimeProducts', { products })
     } catch (error) {
         console.log(error);
@@ -43,7 +46,7 @@ viewsRouter.post('/', async (req, res) => {
 //ruta para chat.handlebars
 viewsRouter.get('/chat', async (req, res) => {
     try {
-        const messages = await messageModel.find({})   
+        const messages = await messageService.getMessages()   
         res.render('chat', { messages })        
     } catch (error) {
         console.error('Error al obtener los mensajes:', error);
@@ -53,8 +56,6 @@ viewsRouter.get('/chat', async (req, res) => {
 
 viewsRouter.post('/api/messages/sendMessage', async (req, res) => {
     try {
-        //const { user, message } = req.body
-        //const result = await messageModel.create({ user, message })
         res.redirect('/chat')
     } catch (error) {
         console.error('Error al enviar el mensaje:', error);
@@ -88,10 +89,12 @@ viewsRouter.get('/products', async (req, res) => {
     hasNextPage,
     prevPage, 
     nextPage,
-    page 
+    page,
+    totalPages
     } = await productModel.paginate(filter, {limit, page: pageQuery, sort: sortOptions, lean: true})
     res.render('products', {
         products: docs,
+        totalPages: totalPages,
         hasPrevPage, 
         hasNextPage,
         prevPage, 
@@ -105,7 +108,7 @@ viewsRouter.get('/products', async (req, res) => {
 viewsRouter.get('/carts/:cid', async (req, res) => {
     try {
         const { cid } = req.params
-        const cart = await cartModel.findOne ({_id: cid})
+        const cart = await cartService.getCart(cid)
         res.render('cart', { cart })
     } catch (error) {
         console.error(error)
