@@ -8,6 +8,7 @@ const productService = new ProductManagerMongo ()
 const MessageManagerMongo = require ('../dao/Mongo/messagesManagerMongo')
 const messageService = new MessageManagerMongo ()
 const { productModel} = require ("../dao/models/products.model")
+const { cartModel} = require ('../dao/models/carts.model')
 
 //Mongo - ruta para home.handlebars
 viewsRouter.get('/home', async (req, res) => {
@@ -108,7 +109,7 @@ viewsRouter.get('/products', async (req, res) => {
 viewsRouter.get('/carts/:cid', async (req, res) => {
     try {
         const { cid } = req.params
-        const cart = await cartService.getCart(cid)
+        const cart = await cartModel.findOne({_id:cid})        
         res.render('cart', { cart })
     } catch (error) {
         console.error(error)
