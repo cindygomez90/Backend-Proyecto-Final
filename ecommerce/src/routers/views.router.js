@@ -104,7 +104,6 @@ viewsRouter.get('/products', async (req, res) => {
     })
 })
 
-
 //ruta para cart.handlebars
 viewsRouter.get('/carts/:cid', async (req, res) => {
     try {
@@ -117,5 +116,19 @@ viewsRouter.get('/carts/:cid', async (req, res) => {
     }
 })
 
+//ruta para login.handlebars
+viewsRouter.get ('/login', (req, res) => {
+    res.render ('login')
+})
+
+//ruta para register.handlebars
+viewsRouter.get ('/register', (req, res) => {
+    res.render ('register')
+})
+
+//ruta para current.handlebars
+viewsRouter.get ('/current', (req, res) => {
+    res.render ('current')
+})
 
 module.exports = viewsRouter

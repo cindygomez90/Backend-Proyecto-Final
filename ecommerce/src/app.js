@@ -8,9 +8,43 @@ const router = require ("./routers/index.js")
 const messageModel = require ("./dao/models/messages.model.js")
 const connectBD = require ("./config/connectDB.js")
 
+const cookieParser = require ('cookie-parser')
+const passport = require('passport')
+const { initializePassport } = require('./config/initializePassport.config.js')
+
+
+//const session = require ("express-session")
+//const { initializePassport } = require('./config/passport.config.js')
+const MongoStore = require ('connect-mongo')
+
+
 const app = express()
 const PORT = 8080 || process.env.PORT
 connectBD ()
+
+
+//app.use (cookieParser ('palabrasecreta'))
+
+//configuración de session para mongo
+/*app.use (session ({
+    store: MongoStore.create ({     
+        mongoUrl: 'mongodb+srv://CINDYGOMEZ:1501@cluster0.orwmj55.mongodb.net/ecommerce?retryWrites=true&w=majority',    
+        mongoOptions:{
+            useNewUrlParser: true,            
+            useUnifiedTopology: true           
+        },
+        ttl: 60*60*1000*24,
+
+    }),
+    secret: 'palabrasecreta',
+    resave: true,    
+    saveUninitialized: true     
+}))
+
+initializePassport()    
+app.use(passport.initialize())  
+app.use(passport.session())*/
+
 
 //configuración de handlebars
 app.engine("handlebars", handlebars.engine(
@@ -26,13 +60,17 @@ app.use(express.static(__dirname + '/public'))
 
 app.use(express.json())   
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
+initializePassport()
+app.use(passport.initialize())
+
 
 //llamado al archivo router
 app.use (router)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
-    console.log('Haciendo Segunda preentrega del Proyecto Final')
+    console.log('Segunda práctica de Integración')
 } )
 
 const io = new Server (httpServer)

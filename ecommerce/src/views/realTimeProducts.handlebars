@@ -7,7 +7,8 @@
     <title>realTimeProducts</title>
 </head>
 <body>
-    <h1>Bienvenidos a nuestra tienda online!</h1>
+    <h1>| Wemí cueros | </h1>
+    <h2>Productos</h2>
     
         <div>
             <h3>Carga de producto</h3>
@@ -34,7 +35,7 @@
                 <label for="category">Categoría:</label>
                 <input type="text" id="category" required>
                 
-                <input value="Agregar" type="submit" id="boton-agregar">
+                <input value="Agregar" type="submit" class="boton">
 
             </form>
         </div>
@@ -52,7 +53,7 @@
                         Stock: {{this.stock}}<br>
                         Categoría: {{this.category}}<br>
                         
-                        <button type="button" class="boton-eliminar" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
+                        <button type="button" class="boton" onclick="deleteProduct('{{this._id}}')">Eliminar</button>
                     </li>
                 {{/each}}
             </ul>

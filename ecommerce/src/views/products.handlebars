@@ -8,8 +8,19 @@
 </head>
 
 <body>
-    <h1>Bienvenidos a nuestra tienda online!</h1>
-    <h2>Productos</h2>
+    <h1>| Wemí cueros |</h1>
+    
+    <div class="mensaje-bienvenida">
+        {{#if user}}
+            <h2>Bienvenid@, {{user.first_name}}!</h2>
+            <form action="/api/sessions/logout" method="POST" class="boton boton-cerrar">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        {{/if}}
+    </div>
+
+    <h2>Esta es nuestra tienda online!</h2>
+
     <div>
         {{#each products}}
         <li>

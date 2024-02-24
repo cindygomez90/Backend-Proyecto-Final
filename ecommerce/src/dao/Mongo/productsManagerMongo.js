@@ -19,7 +19,7 @@ class ProductManagerMongo {
     }
 
     async deleteProduct (pid) {
-        return await productModel.findByIdAndUpdate(pid,{status: false} )
+        return await productModel.findByIdAndUpdate(pid,{status: false})
     }
 }
 
