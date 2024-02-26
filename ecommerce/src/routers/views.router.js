@@ -126,9 +126,4 @@ viewsRouter.get ('/register', (req, res) => {
     res.render ('register')
 })
 
-//ruta para current.handlebars
-viewsRouter.get ('/current', (req, res) => {
-    res.render ('current')
-})
-
 module.exports = viewsRouter

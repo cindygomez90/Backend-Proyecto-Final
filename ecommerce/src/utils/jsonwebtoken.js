@@ -7,4 +7,5 @@ const generateToken = user => jwt.sign(user, PRIVATE_KEY, {
     expiresIn: '1d'
 })
 
+
 module.exports = { PRIVATE_KEY, generateToken } 

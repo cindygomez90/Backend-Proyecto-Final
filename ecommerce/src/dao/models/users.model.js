@@ -10,13 +10,13 @@ const usersSchema = new mongoose.Schema ({
     last_name: String,
     email: {
         type: String,
-        required: true,
+        required: false, //se coloca "false" para que funcione la estrategia de github
         unique: true
     },
     age: Number,
     password: {
         type: String,
-        required: true
+        required: false //se coloca "false" para que funcione la estrategia de github
     },
     isActive: {
         type: Boolean,

@@ -14,7 +14,7 @@ router.use('/api/carts', cartsRouter)
 router.use('/api/messages', messagesRouter)
 router.use('/api/sessions', sessionsRouter)
 router.get('*', (req, res)=>{
-    res.send('not found')   
+    res.render ('errorpagina')   
 })
 
 module.exports = router

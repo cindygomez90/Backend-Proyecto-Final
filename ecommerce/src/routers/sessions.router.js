@@ -11,7 +11,7 @@ const { passportCall}  = require ('../middleware/pasportCall')
 const { authorization } = require ('../middleware/authentication')
 
 //Endpoint para el ingreso del usuario
-sessionsRouter.post ('/login', passport.authenticate('jwt', { session: false }), async (req, res)=>{
+sessionsRouter.post ('/login', async (req, res)=>{
     const {email, password} = req.body       
     
     const user = await sessionService.getUserBy ({email})
@@ -118,10 +118,24 @@ sessionsRouter.get('/failregister', async (req, res) => {
 })
 
 //Endpoint para acceder a current
-sessionsRouter.get('/current', passportCall ('jwt'), authorization ('ADMIN'), async (req, res) => {   
-    res.send({message: 'datos sensibles'})
-})
+sessionsRouter.get('/current', passportCall ('jwt'), authorization (['ADMIN']), async (req, res) => {       
+    try {
+        const currentUser = req.user;
 
+        if (!currentUser) {
+            return res.status(404).json({ status: 'error', error: 'User not found' });
+        }
+        const responseData = {
+            id: currentUser.id,
+            email: currentUser.email
+        }
+
+        res.json(responseData)
+    } catch (error) {
+        console.error('Error al recuperar datos del usuario:', error);
+        res.status(500).json({ status: 'error', error: 'Error del servidor' });
+    }
+})
 
 //Endpoint para el cierre de sesión del usuario
 /*sessionsRouter.post('/logout', (req, res) => {
@@ -150,7 +164,7 @@ sessionsRouter.get('/github', passport.authenticate('github', {scope:['user:emai
 })*/
 
 
-sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/api/sessions/login'} ),async (req, res) => {
+/*sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/api/sessions/login'} ),async (req, res) => {
     const token = generateToken({
         fullname: `${user.first_name} ${user.last_name}`, 
         id: user._id,
@@ -162,7 +176,18 @@ sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRe
         maxAge: 60 * 60 * 1000 * 24,
         httpOnly: true
     }).redirect('/products')
-})
+})*/
+
+sessionsRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+sessionsRouter.get('/githubcallback',
+    passport.authenticate('github', { session: false, failureRedirect: '/api/sessions/login' }), 
+    async(req, res) => {
+        console.log('req.user:', req.user)
+        const user = req.user.user
+        const products = await productService.getProducts()
+        res.render('products', { user: user, products })
+    })
 
 
 module.exports = sessionsRouter
