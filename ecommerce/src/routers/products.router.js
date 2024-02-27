@@ -10,18 +10,6 @@ const productsRouter = Router ()
 //MÉTODO GET
 
 //Mongo - Endpoint para solicitar todos los productos
-/*productsRouter.get('/', async (req, res)=>{  
-    try {
-        const products = await productService.getProducts() 
-        res.json({
-            status: 'success',
-            result: products
-        })
-    } catch (error) {
-        console.log(error)
-    }
-})*/
-
 productsRouter.get('/', async (req, res) => {
     try {
         const { limit = 10, pageQuery = 1, category, order, status } = req.query

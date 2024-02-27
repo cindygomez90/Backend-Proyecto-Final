@@ -40,31 +40,9 @@ sessionsRouter.post ('/login', async (req, res)=>{
         httpOnly: true 
     })
 
-    //req.session.user = {id: user._id, username: user.first_name, role: user.role }
-    //console.log ('req session user sessions', req.session.user)
-
     const products = await productService.getProducts()
     res.render('products', { user: user, products})
 })
-
-//validación si el usuario es administrador
-/*function auth(req, res, next) {
-    if (!req.session.user) {
-        return res.redirect('/login')
-    }
-    if (req.session.user.role === 'admin') {
-        return next()
-    } else {
-        return res.status(403).send('Acceso denegado')
-    }
-}
-
-sessionsRouter.get('/products', auth, (req, res) => {
-    res.render('products', { user: req.session.user });
-})
-sessionsRouter.get('/products', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.render('products', { user: req.user });
-})*/
 
 sessionsRouter.get('/faillogin', async (req, res) => {
     res.send({error: 'falla en el register'})
@@ -138,16 +116,6 @@ sessionsRouter.get('/current', passportCall ('jwt'), authorization (['ADMIN']), 
 })
 
 //Endpoint para el cierre de sesión del usuario
-/*sessionsRouter.post('/logout', (req, res) => {
-    req.session.destroy((error) => {
-        if (error) {
-            return res.send({ status: 'error', message: 'Logout error' })
-        }
-        res.redirect('/login')
-    })
-})*/
-
-
 sessionsRouter.post('/logout', (req, res) => {
     res.clearCookie('cookieToken') 
     res.redirect('/login')
@@ -156,27 +124,6 @@ sessionsRouter.post('/logout', (req, res) => {
 
 //Endpoint para github
 sessionsRouter.get('/github', passport.authenticate('github', {scope:['user:email']}),async (req, res) => {})
-
-
-/*sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/api/sessions/login'} ),async (req, res) => {
-    req.session.user = req.user
-    res.redirect('/products')
-})*/
-
-
-/*sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/api/sessions/login'} ),async (req, res) => {
-    const token = generateToken({
-        fullname: `${user.first_name} ${user.last_name}`, 
-        id: user._id,
-        email: user.email,
-        role: user.role
-    })
-
-    res.cookie('cookieToken', token, {
-        maxAge: 60 * 60 * 1000 * 24,
-        httpOnly: true
-    }).redirect('/products')
-})*/
 
 sessionsRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
