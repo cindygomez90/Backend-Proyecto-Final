@@ -29,7 +29,7 @@
 
     const connectBD = async () => {  
         try {
-            await MongoSingleton.getInstance(process.env.MONGO_URL) 
+            await MongoSingleton.getInstance(configObject.mongo_url) 
             console.log('Base de datos conectada')        
         } catch (error) {
             console.error('Error de conexión a la base de datos:', error)
