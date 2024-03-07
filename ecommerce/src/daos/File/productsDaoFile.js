@@ -4,7 +4,7 @@ const path = require ('path')
 
 //creación de clase
 
-class ProductManager {                             
+class ProductDaoFile {                             
         constructor () {
             this.path = path.resolve (__dirname,'../../../mockDB/Products.json')
             this.products = []
@@ -60,7 +60,7 @@ class ProductManager {
     }
 
 //método para devolver array con los productos existentes
-    async getProducts (){
+    async get (){
         try {
             const ProductsJson = await fs.promises.readFile (this.path)
             const ProductsJs = JSON.parse (ProductsJson)
@@ -72,7 +72,7 @@ class ProductManager {
     } 
 
 //método para buscar en array producto por el id
-    async getProductsById (pid) {
+    async getBy (pid) {
         try {
             const productsId = await this.readFileProducts ()
             const buscarId = productsId.find (product => product.pid === pid)
@@ -87,7 +87,7 @@ class ProductManager {
     }
 
 //método para actualizar campo del producto en archivo según id
-    async updateProduct (pid, price, newValue) {
+    async update (pid, price, newValue) {
         try {
             const datosActuales = await this.readFileProducts () 
             const elemActualizar = datosActuales.find (product => product.pid === pid)
@@ -104,7 +104,7 @@ class ProductManager {
     }
 
 //método para eliminar producto en archivo según id
-    async deleteProduct (pid) {
+    async delete (pid) {
         try {
             const datosActuales = await this.readFileProducts();
             const nvosDatos = datosActuales.filter((product) => product.pid !== pid);
@@ -184,4 +184,4 @@ const test = async () => {
 test ()
 
 //exportación del módulo
-module.exports = ProductManager         
+module.exports = ProductDaoFile         

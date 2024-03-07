@@ -3,7 +3,7 @@ const fs = require ('node:fs/promises')
 
 //creación de clase
 
-class CartsManager {
+class CartsDaoFile {
     constructor (path) {
         this.path = path
     }
@@ -21,7 +21,7 @@ class CartsManager {
     
 
 //método para crear carrito
-    async createCart () {
+    async create () {
         try {
             const carts = await this.readFileCarts ()
             let newCart = {
@@ -37,7 +37,7 @@ class CartsManager {
     }
 
 //método para buscar carrito por el id
-    async getCartById (cid) {
+    async getBy (cid) {
         try {
             const carts = await this.readFileCarts ()
             const cart = carts.find (cart => cart.id === cid)
@@ -73,9 +73,22 @@ class CartsManager {
         } catch (error) {
             return error
         }
+    
+    }
+    async update (cid, newProducts) {
+    
+    }
+
+    async updateProductQuantity(cid, pid, quantity) {
+    }
+    async deleteProductFromCart(cid, pid) {
+    }
+    async deleteAllProductsFromCart(cid) {
+    
     }
 }
 
 
+
 //exportación del módulo
-module.exports = CartsManager
+module.exports = CartsDaoFile

@@ -1,5 +1,5 @@
 //config interna de passport
-const passport = require('passport')
+/*const passport = require('passport')
 const local = require('passport-local')
 const GithubStrategy = require('passport-github2') 
 const UserManagerMongo = require ('../dao/Mongo/usersManagerMongo')
@@ -90,4 +90,4 @@ const initializePassport = () => {
     })
 }
 
-module.exports = { initializePassport }
+module.exports = { initializePassport }*/

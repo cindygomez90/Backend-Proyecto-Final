@@ -1,6 +1,6 @@
-const messageModel = require ("../models/messages.model")
+const messageModel = require ('../Mongo/models/messages.model.js')
 
-class MessageManagerMongo {
+class MessageDaoMongo {
 
     async getMessages() {
         try {
@@ -24,6 +24,6 @@ class MessageManagerMongo {
 }
 
 
-module.exports = MessageManagerMongo
+module.exports = MessageDaoMongo
 
 

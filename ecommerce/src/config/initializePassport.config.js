@@ -1,16 +1,16 @@
 //estrategia de passport con jwt
 const passport = require ('passport') 
 const { Strategy, ExtractJwt } = require ('passport-jwt') 
-const { PRIVATE_KEY, generateToken } = require ('../utils/jsonwebtoken')
+const { PRIVATE_KEY, generateToken } = require ('../utils/jsonwebtoken.js')
 const GithubStrategy = require('passport-github2') 
-const UserManagerMongo = require ('../dao/Mongo/usersManagerMongo')
+const UserManagerMongo = require ('../daos/Mongo/usersDaoMongo.js')
 const sessionService = new UserManagerMongo ()
-
+const { configObject } = require ('../config/connectDB.js')
 
 const JWTStrategy = Strategy
 const ExtractJWT  = ExtractJwt
 
-const initializePassport = () => {
+const initializePassport = () => {    
     const cookieExtractor = (req) => {
         let token = null
         if (req && req.cookies) {
@@ -21,7 +21,7 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: PRIVATE_KEY
+        secretOrKey: configObject.process.env.JWT_SECRET_KEY
     }, async (jwt_payload, done) => {
         try {
             return done(null, jwt_payload)
@@ -70,7 +70,7 @@ const initializePassport = () => {
             try {
             done(null, { token })
         } catch (error) {
-            done(error);
+            done(error)
         }
         })
 }

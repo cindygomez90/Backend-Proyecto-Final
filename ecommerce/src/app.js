@@ -2,20 +2,19 @@
 const express = require ("express")
 const handlebars  = require('express-handlebars')
 const { Server }  = require('socket.io') 
-const ProductManagerMongo = require("./dao/Mongo/productsManagerMongo.js")
+const ProductManagerMongo = require('./daos/Mongo/productsDaoMongo.js')
 const productManager = new ProductManagerMongo()
 const router = require ("./routers/index.js")
-const messageModel = require ("./dao/models/messages.model.js")
-const connectBD = require ("./config/connectDB.js")
+const messageModel = require ('./daos/Mongo/messagesDaoMongo.js')
 const cookieParser = require ('cookie-parser')
 const passport = require('passport')
 const { initializePassport } = require('./config/initializePassport.config.js')
 const MongoStore = require ('connect-mongo')
-
+const { configObject } = require ('./config/connectDB.js')
 
 const app = express()
-const PORT = 8080 || process.env.PORT
-connectBD ()
+const PORT = configObject.port
+
 
 //configuración de handlebars
 app.engine("handlebars", handlebars.engine(
@@ -40,7 +39,7 @@ app.use (router)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
-    console.log('Segunda práctica de Integración')
+    console.log('Tercera entrega del Proyecto Final')
 } )
 
 const io = new Server (httpServer)
@@ -92,7 +91,7 @@ io.on('connection', async (socket) => {
                 message: data.message
             }
     
-            await messageModel.create(newMessage)    
+            await messageModel.create(newMessage)    //probar reemplazando por esto: await messageManager.saveMessage(newMessage.user, newMessage.message)
     
             io.emit('chat', [newMessage])
         } catch (error) {
