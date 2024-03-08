@@ -1,19 +1,19 @@
 //importación de módulos
 const { Router } = require ("express")
 const viewsRouter = Router()
-const CartsManagerMongo = require ('../daos/Mongo/cartsDaoMongo.js')
-const cartService = new CartsManagerMongo ()
-const ProductManagerMongo = require ('../daos/Mongo/productsDaoMongo.js')
-const productService = new ProductManagerMongo ()
-const MessageManagerMongo = require ('../daos/Mongo/messagesDaoMongo.js')
-const messageService = new MessageManagerMongo ()
+const CartsDaoMongo = require ('../daos/Mongo/cartsDaoMongo.js')
+const cartService = new CartsDaoMongo ()
+const ProductDaoMongo = require ('../daos/Mongo/productsDaoMongo.js')
+const productService = new ProductDaoMongo ()
+const MessageDaoMongo = require ('../daos/Mongo/messagesDaoMongo.js')
+const messageService = new MessageDaoMongo ()
 const { productModel} = require ('../daos/Mongo/models/products.model.js')
 const { cartModel} = require ('../daos/Mongo/models/carts.model.js')
 
 //Mongo - ruta para home.handlebars
 viewsRouter.get('/home', async (req, res) => {
     try {
-        const products = await productService.getProducts()
+        const products = await productService.get()
         res.render('home', { products })
     } catch (error) {
         console.error(error)
@@ -25,7 +25,7 @@ viewsRouter.get('/home', async (req, res) => {
 //Mongo - ruta para realTimeProducts.handlebars
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     try {
-        const products = await productService.getProducts()
+        const products = await productService.get()
         res.render('realTimeProducts', { products });
     } catch (error) {
         console.log(error);
@@ -35,7 +35,7 @@ viewsRouter.get('/realtimeproducts', async (req, res) => {
 
 viewsRouter.post('/', async (req, res) => {
     try {
-        const products = await productService.getProducts()
+        const products = await productService.get()
         res.render('realTimeProducts', { products })
     } catch (error) {
         console.log(error);

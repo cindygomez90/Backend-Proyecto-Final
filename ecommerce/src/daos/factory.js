@@ -22,7 +22,7 @@ switch (configObject.persistence) {
 
     default:
         connectBD() 
-
+        
         const CartDaoMongo = require('./Mongo/cartsDaoMongo.js')
         CartDao = CartDaoMongo
 

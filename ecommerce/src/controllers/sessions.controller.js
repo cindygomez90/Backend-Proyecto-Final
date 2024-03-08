@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const { generateToken }  = require ('../utils/jsonwebtoken.js')
 const UserManagerMongo = require("../daos/Mongo/usersDaoMongo.js")
 const ProductManagerMongo = require ('../daos/Mongo/productsDaoMongo.js')
-
+const { UserDto } = require('../dto/userDto.js')
 
 class SessionController {
 
@@ -37,6 +37,8 @@ class SessionController {
                 role: role || 'USER'
             }
             const result = await this.sessionService.createUser (newUser)
+            
+            const userDto = new UserDto(result)
             const token = generateToken({
                 id: result._id
             })
@@ -45,7 +47,7 @@ class SessionController {
                 httpOnly: true  
             }).send({   
                 status: 'success',
-                usersCreate: result, 
+                usersCreate: userDto, 
                 token   
             })
         } catch (error) {
@@ -74,12 +76,14 @@ class SessionController {
         if (!isPasswordValid) {
             return responses.send({ status: 'error', error: 'Contraseña incorrecta' })
         }
-    
+        
+        const userDto = new UserDto(user)
+
         const token = generateToken({
-            fullname: `${user.first_name} ${user.last_name}`, 
+            fullname: userDto.full_name,
             id: user._id,
-            email: user.email,
-            role: user.role
+            email: userDto.email,
+            role: userDto.role
         })
         responses.cookie('cookieToken', token, {
             maxAge: 60*60*1000*24,  
@@ -87,7 +91,7 @@ class SessionController {
         })
     
         const products = await this.productService.getProducts()
-        responses.render('products', { user: user, products})
+        responses.render('products', { user: userDto, products})
     }
 
     faillogin = async (request, responses) => {

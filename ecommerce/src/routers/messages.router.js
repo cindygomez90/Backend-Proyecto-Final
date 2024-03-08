@@ -1,6 +1,6 @@
 const { Router } = require ("express")
-const MessageManagerMongo = require ('../daos/Mongo/messagesDaoMongo.js')
-const messageService = new MessageManagerMongo ()
+const MessageDaoMongo = require ('../daos/Mongo/messagesDaoMongo.js')
+const messageService = new MessageDaoMongo ()
 const messagesRouter = Router ()
 
 

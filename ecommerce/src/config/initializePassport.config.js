@@ -1,18 +1,19 @@
 //estrategia de passport con jwt
 const passport = require ('passport') 
 const { Strategy, ExtractJwt } = require ('passport-jwt') 
-const { PRIVATE_KEY, generateToken } = require ('../utils/jsonwebtoken.js')
+const { generateToken } = require ('../utils/jsonwebtoken.js')
 const GithubStrategy = require('passport-github2') 
 const UserManagerMongo = require ('../daos/Mongo/usersDaoMongo.js')
 const sessionService = new UserManagerMongo ()
 const { configObject } = require ('../config/connectDB.js')
+const { UserDto } = require('../dto/userDto.js') 
 
 const JWTStrategy = Strategy
 const ExtractJWT  = ExtractJwt
 
 const initializePassport = () => {    
     const cookieExtractor = (req) => {
-        let token = null
+        let token = null    
         if (req && req.cookies) {
             token = req.cookies['cookieToken'] 
         }
@@ -30,10 +31,10 @@ const initializePassport = () => {
         }
     }))
 
-    passport.use('github', new GithubStrategy({         
-        clientID:'Iv1.76e1c1dcf997321f',
-        clientSecret: '12ff2188ae743e78135a170c5e787393d4a866bb',
-        callbackURL: 'http://localhost:8080/api/sessions/githubcallback',       
+    passport.use('github', new GithubStrategy( {
+        clientID: configObject.clientID,
+        clientSecret: configObject.clientSecret,
+        callbackURL: configObject.callbackURL,
     }, async (accessToken, refreshToken, profile, done)=>{
         console.log('profile: ', profile)
         try {
@@ -47,32 +48,35 @@ const initializePassport = () => {
                         password: ''
                     }
 
-                    const result = await sessionService.createUser (newUser)
-                    user = result
-                    }
-                    const token = generateToken({
-                        fullname: `${user.first_name} ${user.last_name}`, 
-                        id: user._id,
-                        email: user.email,
-                        role: user.role
-                    })
-                    done(null, {token, user})
-                } catch (error) {
-                done(error)
-            }
-        }))
-        
-        passport.serializeUser((user, done) => {
-            done(null, user.token)
-        });
+                const result = await sessionService.createUser (newUser)
+                user = result
+                }
 
-        passport.deserializeUser(async (token, done) => {
-            try {
-            done(null, { token })
+                const userDto = new UserDto(user)
+
+                const token = generateToken({
+                    fullname: userDto.full_name,
+                    id: user._id,
+                    email: userDto.email,
+                    role: user.role
+                })
+                done(null, {token, user: userDto})
         } catch (error) {
             done(error)
-        }
-        })
+    }
+}))
+
+    passport.serializeUser((user, done) => {
+        done(null, user.token)
+    });
+
+    passport.deserializeUser(async (token, done) => {
+        try {
+        done(null, { token })
+    } catch (error) {
+        done(error)
+    }
+    })
 }
 
 module.exports = { initializePassport }
