@@ -31,6 +31,7 @@ const initializePassport = () => {
         }
     }))
 
+
     passport.use('github', new GithubStrategy( {
         clientID: configObject.clientID,
         clientSecret: configObject.clientSecret,
@@ -39,7 +40,7 @@ const initializePassport = () => {
         console.log('profile: ', profile)
         try {
             
-                let user = await sessionService.getUserBy({email: profile._json.email})
+                let user = await sessionService.getBy({email: profile._json.email})
                 if (!user) {
                     let newUser = {
                         first_name: profile._json.login,
@@ -48,7 +49,7 @@ const initializePassport = () => {
                         password: ''
                     }
 
-                const result = await sessionService.createUser (newUser)
+                const result = await sessionService.create (newUser)
                 user = result
                 }
 

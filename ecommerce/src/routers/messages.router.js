@@ -7,8 +7,8 @@ const messagesRouter = Router ()
 const bodyParser = require('body-parser')
 messagesRouter.use(bodyParser.urlencoded({ extended: true }))
 
-//MÉTODO GET
-//Mongo - Endpoint para obtener todos los mensajes
+
+//Endpoint para obtener todos los mensajes
 messagesRouter.get('/', async (request, responses)=>{
     try {
         const messages = await messageService.getMessages()    
@@ -26,8 +26,8 @@ messagesRouter.get('/', async (request, responses)=>{
 })
 
 
-//MÉTODO POST
-//Mongo - Endpoint para enviar un nuevo mensaje
+
+//Endpoint para enviar un nuevo mensaje
 messagesRouter.post('/', async (req, res) => {
     try {
         const { user, message } = req.body

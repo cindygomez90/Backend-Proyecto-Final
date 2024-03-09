@@ -10,7 +10,7 @@ const messageService = new MessageDaoMongo ()
 const { productModel} = require ('../daos/Mongo/models/products.model.js')
 const { cartModel} = require ('../daos/Mongo/models/carts.model.js')
 
-//Mongo - ruta para home.handlebars
+//vista para home
 viewsRouter.get('/home', async (req, res) => {
     try {
         const products = await productService.get()
@@ -22,13 +22,14 @@ viewsRouter.get('/home', async (req, res) => {
 })
 
 
-//Mongo - ruta para realTimeProducts.handlebars
+//vista para realTimeProducts
 viewsRouter.get('/realtimeproducts', async (req, res) => {
     try {
         const products = await productService.get()
-        res.render('realTimeProducts', { products });
+        res.render('realTimeProducts', { products })
+        
     } catch (error) {
-        console.log(error);
+        console.log(error)
         res.render('error', { message: 'Error al intentar obtener la lista de productos.' })
     }
 })
@@ -44,7 +45,7 @@ viewsRouter.post('/', async (req, res) => {
     }
 })
 
-//ruta para chat.handlebars
+//vista para chat
 viewsRouter.get('/chat', async (req, res) => {
     try {
         const messages = await messageService.getMessages()   
@@ -64,7 +65,7 @@ viewsRouter.post('/api/messages/sendMessage', async (req, res) => {
     }
 })
 
-//ruta para products.handlebars
+//vista para products
 viewsRouter.get('/products', async (req, res) => {    
     const {limit = 10, pageQuery = 1, category, order, status} = req.query   
     
@@ -104,7 +105,7 @@ viewsRouter.get('/products', async (req, res) => {
     })
 })
 
-//ruta para cart.handlebars
+//vista para cart
 viewsRouter.get('/carts/:cid', async (req, res) => {
     try {
         const { cid } = req.params
@@ -116,12 +117,12 @@ viewsRouter.get('/carts/:cid', async (req, res) => {
     }
 })
 
-//ruta para login.handlebars
+//vista para login
 viewsRouter.get ('/login', (req, res) => {
     res.render ('login')
 })
 
-//ruta para register.handlebars
+//vista para register
 viewsRouter.get ('/register', (req, res) => {
     res.render ('register')
 })

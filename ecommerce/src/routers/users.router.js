@@ -5,14 +5,14 @@ const { passportCall } = require ('../middleware/pasportCall.js')
 const { authorization } = require ('../middleware/authentication.js') 
 
 const usersRouter = Router()
-const { getUsers, getUserBy, createUser, updateUser, deleteUser} = new UserController ()
+const { getUsers, getUser, createUser, updateUser, deleteUser} = new UserController ()
 
 
 //Endpoint para solicitar todos los usuarios
 usersRouter.get('/', passportCall('jwt'), authorization(['ADMIN']), getUsers)
 
 //Endpoint para solicitar un usuario
-usersRouter.get('/:uid', getUserBy)
+usersRouter.get('/:uid', getUser)
 
 //Endpoint para crear un usuario
 usersRouter.post('/', createUser)

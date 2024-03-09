@@ -6,7 +6,7 @@ class ProductRepository {
 
     getProducts    = async () => await this.dao.get()  
 
-    getProduct     = async (filter) => await this.dao.getBy(filter)
+    getProduct     = async (pid) => await this.dao.getBy(pid)
 
     createProduct  = async (productNew) => await this.dao.create(productNew)
 

@@ -4,6 +4,7 @@ const productsRouter = require ("../routers/products.router")
 const cartsRouter = require ("../routers/carts.router")
 const messagesRouter = require ("../routers/messages.router")
 const sessionsRouter = require("./sessions.router")
+const usersRouter = require("./users.router")
 
 const router = Router()
 
@@ -13,6 +14,7 @@ router.use('/api/products', productsRouter)
 router.use('/api/carts', cartsRouter)
 router.use('/api/messages', messagesRouter)
 router.use('/api/sessions', sessionsRouter)
+router.use('/api/users', usersRouter)
 router.get('*', (req, res)=>{
     res.render ('errorpagina')   
 })

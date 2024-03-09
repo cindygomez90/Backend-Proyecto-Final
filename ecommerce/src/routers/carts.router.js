@@ -9,13 +9,13 @@ const { createCart, getCart, addProductToCart, updateCart, updateProductQuantity
 cartsRouter.get ('/:cid', getCart)
 
 //Endpoint para crear un carrito
-cartsRouter.post ('/', createCart )
+cartsRouter.post ('/', createCart)
 
 //Endpoint para agregar un producto a un carrito
 cartsRouter.post('/:cid/products/:pid', addProductToCart)
 
 //Endpoint para actualizar el carrito con un arreglo de productos
-cartsRouter.put('/:cid',updateCart )
+cartsRouter.put('/:cid',updateCart)
 
 //Endpoint para actualizar solo la cantidad de un producto en el carrito
 cartsRouter.put('/:cid/products/:pid', updateProductQuantity)

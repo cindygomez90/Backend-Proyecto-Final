@@ -2,7 +2,7 @@ const socket = io()
 
 //manejo de formulario de carga de productos (vista realTimeProducts.handlebars)
 function addProduct() {
-
+    
     let title = document.getElementById("title").value
     let description = document.getElementById("description").value
     let price = document.getElementById("price").value

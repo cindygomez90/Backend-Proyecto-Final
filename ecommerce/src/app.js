@@ -55,7 +55,7 @@ io.on('connection', async (socket) => {
             title: data.title,
             description: data.description,
             price: data.price,
-            thumbail: data.thumbail,
+            thumbnail: data.thumbnail,
             code: data.code,
             stock: data.stock,            
         }
@@ -65,7 +65,8 @@ io.on('connection', async (socket) => {
             const updatedProducts = await productManager.getProducts()
             io.emit("updateProducts", updatedProducts)
         } catch (error) {
-            console.error("Error al agregar producto:", error)
+            console.error("Error al agregar producto:", error);
+            socket.emit("productError", { error: "Error al agregar producto" })
         }
     })
         
@@ -78,7 +79,8 @@ io.on('connection', async (socket) => {
             const updatedProducts = await productManager.getProducts()
             io.emit("updateProducts", updatedProducts)
         } catch (error) {
-            console.error("Error al eliminar producto:", error)
+            console.error("Error al eliminar producto:", error);
+            socket.emit("productError", { error: "Error al eliminar producto" })
         }
     })
 

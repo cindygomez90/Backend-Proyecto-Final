@@ -1,14 +1,16 @@
 const bcrypt = require('bcrypt')
 const { generateToken }  = require ('../utils/jsonwebtoken.js')
-const UserManagerMongo = require("../daos/Mongo/usersDaoMongo.js")
-const ProductManagerMongo = require ('../daos/Mongo/productsDaoMongo.js')
+//const UserDaoMongo = require("../daos/Mongo/usersDaoMongo.js")
+//const ProductDaoMongo = require ('../daos/Mongo/productsDaoMongo.js')
+
+const { userService, productService } = require ('../repositories/index.js')
 const { UserDto } = require('../dto/userDto.js')
 
 class SessionController {
 
     constructor () {
-        this.sessionService = new UserManagerMongo ()
-        this.productService = new ProductManagerMongo ()
+        this.userService = userService
+        this.productService = productService
     }
 
     register = async (request, responses)=>{
@@ -19,7 +21,7 @@ class SessionController {
                 return responses.send ('Faltan llenar campos obligatorios')
             } 
     
-            const existingUser = await this.sessionService.getUserBy({ email })
+            const existingUser = await this.userService.getUser({ email })
             if (existingUser) {
                 return responses.send({
                     status: 'error',
@@ -36,7 +38,7 @@ class SessionController {
                 password: hashedPassword,
                 role: role || 'USER'
             }
-            const result = await this.sessionService.createUser (newUser)
+            const result = await this.userService.createUser (newUser)
             
             const userDto = new UserDto(result)
             const token = generateToken({
@@ -62,7 +64,7 @@ class SessionController {
     login = async (request, responses)=>{
         const {email, password} = request.body       
         
-        const user = await this.sessionService.getUserBy ({email}) 
+        const user = await this.userService.getUser ({email}) 
         console.log (user)
         if (!user) {
             return responses.send ({
@@ -100,7 +102,8 @@ class SessionController {
 
     current = async (request, responses) => {       
         try {
-            const currentUser = request.user;
+            console.log('Usuario actual:', request.user)
+            const currentUser = request.user
     
             if (!currentUser) {
                 return responses.status(404).json({
@@ -111,9 +114,9 @@ class SessionController {
             const responseData = {
                 id: currentUser.id,
                 email: currentUser.email
-            }
-    
-            res.json(responseData)
+            }    
+            responses.json(responseData)
+            
         } catch (error) {
             console.error('Error al recuperar datos del usuario:', error)
             responses.status(500).json({ status: 'error', error: 'Error del servidor' })

@@ -22,7 +22,7 @@ class UserDaoMongo {
     }
 
     async delete (uid) {
-        return await userModel.findByIdAndDelete ({_id:uid})
+        return await userModel.findByIdAndDelete (uid)
     }
 }
 

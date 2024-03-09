@@ -1,4 +1,3 @@
-//const UserManagerMongo = require ('../daos/Mongo/usersManagerMongo.js')
 const { userService } = require ('../repositories/index.js')
 
 class UserController {
@@ -20,8 +19,8 @@ class UserController {
     
     getUser =  async (request, responses)=>{
         try {
-            const { filter } = request.params
-            const user = await this.userService.getUser (filter)
+            const { uid } = request.params
+            const user = await this.userService.getUser ( {_id: uid} )
             responses.json({
                 status: 'success',
                 result: user
@@ -33,7 +32,7 @@ class UserController {
     
     createUser = async (request, responses)=>{
         try {
-            const { first_name, last_name, email, password } = request
+            const { first_name, last_name, email, password } = request.body
             
             const newUser = {
                 first_name,
@@ -41,7 +40,7 @@ class UserController {
                 email,
                 password
             }
-                    
+            
             const result = await this.userService.createUser (newUser)
     
             responses.send({
@@ -56,7 +55,7 @@ class UserController {
     updateUser = async (request, responses)=>{
         try {
             const {uid} = request.params
-            const userUpdate = req.body
+            const userUpdate = request.body
             const result = await this.userService.updateUser (uid, userUpdate)
             responses.status (200).send ({
                 status:'sucess',

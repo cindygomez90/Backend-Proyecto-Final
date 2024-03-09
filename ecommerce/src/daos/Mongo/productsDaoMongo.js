@@ -6,8 +6,8 @@ class ProductDaoMongo {
         return await productModel.find({status: true})
     }
 
-    async getBy (filter) {
-        return await productModel.findOne (filter)
+    async getBy (pid) {
+        return await productModel.findOne ({ _id: pid })
     }
 
     async create (productNew) {

@@ -1,5 +1,3 @@
-//const CartsManagerMongo = require ('../daos/Mongo/cartsDaoMongo.js')
-//const ProductManagerMongo = require ('../daos/Mongo/productsDaoMongo.js')
 const { cartService, productService } = require ('../repositories/index.js')
 
 
@@ -56,10 +54,19 @@ class CartController {
                     message: 'No se encuentra el producto indicado',
                 });
             }
-            cart.products.push({
-                product: product._id,
-                quantity: 1,            
-            })
+
+            const productIndex = cart.products.findIndex(p => p.product.equals(pid))
+    
+            if (productIndex === -1) {
+                    cart.products.push({
+                    product: pid,
+                    quantity: 1
+                });
+            } else {                    
+                cart.products[productIndex].quantity += 1
+            }
+
+            
             await cart.save()
     
             res.json({
@@ -110,7 +117,7 @@ class CartController {
             const { cid, pid } = req.params
             const { quantity } = req.body
     
-            const cart = await this.cartService.updateProductQuantity(cid, pid, quantity)
+            const cart = await this.cartService.updateProductQuantity (cid, pid, quantity)
     
             if (!cart) {
                 return res.status(404).json({
