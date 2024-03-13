@@ -24,9 +24,10 @@ const initializePassport = () => {
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
         secretOrKey: configObject.jwt_secret_Key
     }, async (jwt_payload, done) => {
-        try {
+        try {            
             return done(null, jwt_payload)
         } catch (error) {
+            console.error('Error al verificar el token:', error)
             return done(error)   
         }
     }))

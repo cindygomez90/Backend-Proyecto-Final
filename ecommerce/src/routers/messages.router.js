@@ -1,4 +1,6 @@
 const { Router } = require ("express")
+const { passportCall}  = require ('../middleware/pasportCall.js')
+const { authorization } = require ('../middleware/authentication.js')
 const MessageDaoMongo = require ('../daos/Mongo/messagesDaoMongo.js')
 const messageService = new MessageDaoMongo ()
 const messagesRouter = Router ()
@@ -28,7 +30,7 @@ messagesRouter.get('/', async (request, responses)=>{
 
 
 //Endpoint para enviar un nuevo mensaje
-messagesRouter.post('/', async (req, res) => {
+messagesRouter.post('/', passportCall ('jwt'), authorization (['USER']), async (req, res) => {
     try {
         const { user, message } = req.body
         const result = await messageService.saveMessage (user, message)

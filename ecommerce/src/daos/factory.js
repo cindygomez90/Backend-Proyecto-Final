@@ -3,6 +3,7 @@ const { configObject, connectBD } = require('../config/connectDB.js');
 let UserDao
 let ProductDao
 let CartDao
+let TicketDao
 
 switch (configObject.persistence) {
     case 'FILE':
@@ -32,7 +33,10 @@ switch (configObject.persistence) {
         const UserDaoMongo = require('./Mongo/usersDaoMongo.js')
         UserDao = UserDaoMongo
 
+        const TicketDaoMongo = require('./Mongo/ticketsDaoMongo.js')
+        TicketDao = TicketDaoMongo
+
         break;
 }
 
-module.exports = { UserDao, ProductDao, CartDao }
+module.exports = { UserDao, ProductDao, CartDao, TicketDao }

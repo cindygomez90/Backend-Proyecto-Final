@@ -1,8 +1,5 @@
 const bcrypt = require('bcrypt')
 const { generateToken }  = require ('../utils/jsonwebtoken.js')
-//const UserDaoMongo = require("../daos/Mongo/usersDaoMongo.js")
-//const ProductDaoMongo = require ('../daos/Mongo/productsDaoMongo.js')
-
 const { userService, productService } = require ('../repositories/index.js')
 const { UserDto } = require('../dto/userDto.js')
 
@@ -102,24 +99,29 @@ class SessionController {
 
     current = async (request, responses) => {       
         try {
-            console.log('Usuario actual:', request.user)
-            const currentUser = request.user
-    
-            if (!currentUser) {
+            console.log('Objeto user recibido:', request.user)
+            const userDto = new UserDto (request.user)
+            
+            if (!userDto) {
                 return responses.status(404).json({
                     status: 'error', 
-                    error: 'User not found' 
+                    error: 'Usuario no encontrado' 
                 })
             }
             const responseData = {
-                id: currentUser.id,
-                email: currentUser.email
-            }    
+                fullname: userDto.full_name,
+                email: userDto.email,
+                role: userDto.role
+            }
+
             responses.json(responseData)
             
         } catch (error) {
             console.error('Error al recuperar datos del usuario:', error)
-            responses.status(500).json({ status: 'error', error: 'Error del servidor' })
+            responses.status(500).json({ 
+                status: 'error', 
+                error: 'Error del servidor' 
+            })
         }
     }
 

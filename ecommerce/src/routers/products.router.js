@@ -1,6 +1,9 @@
 //importación de módulos
 const { Router } = require ("express")
+const { passportCall}  = require ('../middleware/pasportCall.js')
+const { authorization } = require ('../middleware/authentication.js')
 const ProductController = require ('../controllers/products.controller.js')
+
 
 const productsRouter = Router ()
 const { getProducts, getProduct, createProduct, updateProduct, deleteProduct} = new ProductController ()
@@ -13,14 +16,14 @@ productsRouter.get('/', getProducts)
 productsRouter.get('/:pid', getProduct) 
 
 //Endpoint para agregar un nuevo producto
-productsRouter.post('/', createProduct)
+productsRouter.post('/', passportCall ('jwt'), authorization (['ADMIN']), createProduct)
 
 //Endpoint para actualizar campos de un producto por id
-productsRouter.put('/:pid', updateProduct)
+productsRouter.put('/:pid', passportCall ('jwt'), authorization (['ADMIN']), updateProduct)
 
 //Endpoint para eliminar un producto por id
 
-productsRouter.delete('/:pid', deleteProduct)
+productsRouter.delete('/:pid', passportCall ('jwt'), authorization (['ADMIN']), deleteProduct)
 
 
 module.exports = productsRouter
