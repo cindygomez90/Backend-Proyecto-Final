@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+</head>
+<body>
+    <h1>Usuarios</h1>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre y Apellido</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                    <tr>
+                        <td>{{this.first_name}} {{this.last_name}}</td>
+                        <td>{{this.email}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <div>
+            {{#if hasPrevPage}}
+                <a href="/users?page={{prevPage}}&limit={{../limit}}"><button>Anterior</button></a>
+            {{/if}}
+            <label>{{page}}</label>
+            {{#if hasNextPage}}
+                <a href="/users?page={{nextPage}}&limit={{../limit}}"><button>Siguiente</button></a>
+            {{/if}}
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -14,7 +14,7 @@ cartsRouter.get ('/:cid', getCart)
 cartsRouter.post ('/', createCart)
 
 //Endpoint para agregar un producto a un carrito
-cartsRouter.post('/:cid/products/:pid', passportCall ('jwt'), authorization (['USER']), addProductToCart)
+cartsRouter.post('/:cid/products/:pid', passportCall ('jwt'), authorization (['USER', 'USER_PREMIUM']), addProductToCart)
 
 //Endpoint para actualizar el carrito con un arreglo de productos
 cartsRouter.put('/:cid',updateCart)
@@ -26,10 +26,10 @@ cartsRouter.put('/:cid/products/:pid', updateProductQuantity)
 cartsRouter.delete('/:cid/products/:pid', deleteProductFromCart)
 
 //Endpoint para eliminar todos los productos de un carrito
-cartsRouter.delete('/:cid', deleteAllProductsFromCart)
+cartsRouter.delete('/:cid', deleteAllProductsFromCart)  
 
 //Endpoint para finalizar el proceso de compra
-cartsRouter.post('/:cid/purchase', passportCall ('jwt'), authorization (['USER']), purchaseCart)
+cartsRouter.post('/:cid/purchase', passportCall ('jwt'), authorization (['USER']), purchaseCart)    
 
 
 module.exports = cartsRouter

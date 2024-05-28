@@ -6,6 +6,8 @@ class TicketRepository {
 
     createTicket  = async (ticketData) => await this.dao.create(ticketData)
 
+    getTicket = async (tid) => await this.dao.getBy(tid)
+
 }
 
 

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Users</title>
+</head>
+<body>
+    <h1>Admin Users</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+            <tr>
+                <td>{{this.first_name}}</td>
+                <td>{{this.last_name}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.role}}</td>
+                <td>
+                    <form action="/api/users/role/{{uid}}" method="post">
+                        <input type="hidden" name="_method" value="PUT">
+                        <select name="role">
+                            <option value="USER" {{#if this.isUser}}selected{{/if}}>User</option>
+                            <option value="USER_PREMIUM" {{#if this.isPremiumUser}}selected{{/if}}>Premium User</option>
+                            <option value="ADMIN" {{#if this.isAdmin}}selected{{/if}}>Admin</option>
+                        </select>
+                        <button type="submit">Cambiar Rol</button>
+                    </form>
+
+                    <form id="deleteForm_{{this.uid}}" onsubmit="return deleteUser('{{this.uid}}')">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</button>
+                    </form>
+
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <nav>
+        <ul>
+            {{#if hasPrevPage}}
+            <li><a href="/admin/users?page={{prevPage}}&limit={{limit}}">Anterior</a></li>
+            {{/if}}
+            {{#if hasNextPage}}
+            <li><a href="/admin/users?page={{nextPage}}&limit={{limit}}">Siguiente</a></li>
+            {{/if}}
+        </ul>
+    </nav>
+    <script>
+    async function deleteUser(userId) {
+        try {
+            const response = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                // Manejar la respuesta si es exitosa
+                console.log('Usuario eliminado exitosamente');
+                // Opcional: actualizar la página o realizar otras acciones después de eliminar
+            } else {
+                // Manejar la respuesta si hay errores
+                console.error('Error al eliminar usuario:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error al eliminar usuario:', error);
+        }
+        return false; // Para evitar que el formulario se envíe normalmente
+    }
+</script>
+
+</body>
+</html>
+

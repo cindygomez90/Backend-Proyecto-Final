@@ -3,8 +3,8 @@ class ProductRepository {
     constructor (productDao) {
         this.dao = productDao
     }
-
-    getProducts    = async () => await this.dao.get()  
+    
+    getProducts    = async () => await this.dao.get()
 
     getProduct     = async (pid) => await this.dao.getBy(pid)
 

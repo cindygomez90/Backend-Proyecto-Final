@@ -5,7 +5,8 @@ const { authorization } = require ('../middleware/authentication.js')
 const SessionController = require('../controllers/sessions.controller.js')
 
 const sessionsRouter = Router ()
-const { register, failregister, login, faillogin, current, logout, GitHub } = new SessionController ()
+const { register, failregister, login, faillogin, current, logout, GitHub, requestPasswordReset, resetPassword, processResetPassword } = new SessionController ()
+
 
 //Endpoint para el registro del usuario
 sessionsRouter.post ('/register', register)
@@ -22,6 +23,14 @@ sessionsRouter.get('/current', passportCall ('jwt'), authorization (['ADMIN']), 
 //Endpoint para el cierre de sesión del usuario
 sessionsRouter.post('/logout', logout)
 
+//Endpoint para solicitar restablecimiento de contraseña 
+sessionsRouter.post('/forgot-password', requestPasswordReset)
+
+//Endpoint para restablecer contraseña 
+sessionsRouter.get('/reset-password', resetPassword)
+
+//Endpoint para procesar contraseña 
+sessionsRouter.post('/reset-password', processResetPassword)
 
 //Endpoint para github
 sessionsRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }))

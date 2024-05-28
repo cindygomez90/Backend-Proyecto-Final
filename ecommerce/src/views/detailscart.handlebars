@@ -1,0 +1,95 @@
+<center class="mt-5">
+    <h2>Carrito de compra</h2>
+</center>
+
+{{#if cart.products.length}}
+    {{#each cart.products}}
+        <div>
+            <img src="{{this.product.thumbnail}}" alt="Imagen del Producto" style="width: 10%;">
+            <label>Nombre: {{this.product.title}}</label>
+            <label>Precio: {{this.product.price}}</label>
+            <label>Cantidad: {{this.quantity}}</label>
+            <button class="btn btn-outline-danger" onclick="eliminarProduct('{{this.product._id}}')"><strong> X </strong></button>
+        </div>
+        <hr>
+    {{/each}}
+    <div>
+        <label><strong>Total de la compra: ${{total}}</strong></label>
+    </div>
+
+    <button onclick="location.href='/products'">Seguir comprando</button>
+    <button id="terminar-compra" class="btn btn-outline-success">Terminar compra</button>  
+{{else}}
+    <center>
+        <p>No hay productos en el carrito <a href="/products">Seguir comprando</a></p>
+    </center>
+{{/if}}
+
+    
+<script>
+
+    function eliminarProduct(id) {
+    const cid = localStorage.getItem('cid');
+    console.log(`Eliminar producto con ID: ${id} del carrito con ID: ${cid}`);
+
+    if (cid && cid !== 'undefined') {
+        // Si cid existe y no es "undefined", realizar la solicitud DELETE
+        fetch(`/api/carts/${cid}/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function(res) {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+                return res.json();
+            })
+        .then(function(data) {
+            window.location.reload();
+        })
+        .catch(function(error) {
+            console.error('Error al eliminar el producto:', error);
+        });
+    } else {
+        // Si cid no existe o es "undefined", mostrar un mensaje de error en la consola
+        console.error('El ID del carrito no está definido.');
+    }
+}
+
+    const button = document.querySelector('#terminar-compra');
+
+    function createTicket() {
+        const cid = localStorage.getItem('cid');
+
+        fetch(`/api/carts/${cid}/purchase`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+        console.log(data);
+        if (data.status === 'success') {
+            window.location.href = `/tickets/${data.ticketId}`; // Redirige a la vista del ticket generado
+        } else {
+            Toastify({
+                text: "Error al realizar la compra",
+                duration: 3000,
+                gravity: "top",
+                position: 'right',
+                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+}
+
+button.addEventListener('click', createTicket);
+
+</script>
+

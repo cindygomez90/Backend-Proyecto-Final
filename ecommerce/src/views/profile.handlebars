@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del usuario</title>
+</head>
+<body>
+    <h1>Formulario de carga de archivos</h1>
+    <p>ID del usuario: {{uid}}</p>
+
+<main>
+    <h2>Subir imagen de perfil</h2>
+    <form action="api/users/{{uid}}/documents" method="POST" enctype="multipart/form-data">
+        <label for="profiles">Seleccionar imagen de perfil:</label>
+        <input type="file" name="profiles" accept="image/*" required><br><br>
+        <button type="submit">Enviar</button>
+    </form>
+    
+    <h2>Subir imágenes de productos</h2>
+    <form action="api/users/{{uid}}/documents" method="POST" enctype="multipart/form-data">
+        <label for="products">Seleccionar imágenes de productos:</label>
+        <input type="file" name="products" accept="image/*"><br><br>
+        <button type="submit">Enviar</button>
+    </form>
+    
+    <h2>Subir documentos del usuario</h2>
+    <form action="api/users/{{uid}}/documents" method="POST" enctype="multipart/form-data">
+        <label for="documents">Seleccionar documentos:</label>
+        <input type="file" name="documents" id="documents" multiple>
+        <br><br>
+        <button type="submit" value="Upload files">Enviar</button>
+    </form>
+</main>
+
+</body>
+</html>
+

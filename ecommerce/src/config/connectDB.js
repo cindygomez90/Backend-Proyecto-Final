@@ -1,9 +1,7 @@
 const dotenv = require ('dotenv')
 const { program } = require('../utils/commander')
-const MongoSingleton = require("../utils/mongoSingleton")
-
 const { mode } = program.opts() 
-
+const MongoSingleton = require("../utils/mongoSingleton")
 
 console.log('Modo:', mode)
 console.log('Ruta del archivo .env:', mode === 'development' ? './.env.development' : './.env.production')

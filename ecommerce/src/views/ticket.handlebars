@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de Compra</title>
+</head>
+<body>
+    <div>
+        <h2>Ticket de Compra</h2>
+        <p><strong>Código:</strong> {{ticket.code}}</p>
+        <p><strong>Fecha y Hora:</strong> {{ticket.purchase_datetime}}</p>
+        <p><strong>Monto Total:</strong> ${{ticket.amount}}</p>
+        <p><strong>Comprador:</strong> {{ticket.purchaser}}</p>
+        <h3>Productos Comprados</h3>
+        <ul>
+            {{#each ticket.purchasedProducts}}
+                <li>{{this.title}} - ${{this.price}}</li>
+            {{/each}}
+        </ul>
+        <button onclick="location.href='/products'">Seguir comprando</button>
+        <button id="pagarBtn" >Pagar con Stripe</button>
+    </div>
+
+    {{!
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        // Agregar el evento click al botón de pagar
+        document.getElementById('pagarBtn').addEventListener('click', function() {
+            // Redirigir a la pasarela de pagos de Stripe
+            window.location.href = '/pagar-con-stripe'; // Cambia la URL según tu configuración de ruta
+        });
+    </script>
+    }}
+</body>
+</html>

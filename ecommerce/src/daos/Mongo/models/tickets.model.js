@@ -21,9 +21,12 @@ const ticketsSchema = new mongoose.Schema({
 
     purchasedProducts: [{ 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Product' }]
+        ref: 'products' }]
 }) 
 
+ticketsSchema.pre('findOne', function () {
+    this.populate('purchasedProducts'); // Poblará el campo purchasedProducts con los detalles de los productos
+})
 
 const ticketModel = mongoose.model (ticketCollection, ticketsSchema) 
 

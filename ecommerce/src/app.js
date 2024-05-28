@@ -11,6 +11,9 @@ const passport = require('passport')
 const { initializePassport } = require('./config/initializePassport.config.js')
 const MongoStore = require ('connect-mongo')
 const { configObject } = require ('./config/connectDB.js')
+const { handleErrors } = require ('./middleware/errors-midd/index.js')
+const { addLogger } = require("./utils/logger.js")
+const methodOverride = require('method-override')
 
 const app = express()
 const PORT = configObject.port
@@ -32,14 +35,15 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 initializePassport()
 app.use(passport.initialize())
+app.use(methodOverride('_method'))
 
-
-//llamado al archivo router
+app.use(addLogger)
 app.use (router)
+app.use(handleErrors)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
-    console.log('Tercera entrega del Proyecto Final')
+    console.log('Proyecto Final: Backend de una aplicación ecommerce')
 } )
 
 const io = new Server (httpServer)

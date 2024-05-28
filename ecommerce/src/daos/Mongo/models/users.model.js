@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const usersCollection = 'users'
 
@@ -30,10 +31,29 @@ const usersSchema = new mongoose.Schema ({
         type: String,
         enum :['USER', 'USER_PREMIUM', 'ADMIN'],
         default: 'USER'
-    }
+    },
+    documents: [
+        {
+            name: String,
+            reference: String
+        }
+    ],
+    profiles: [
+        {
+            name: String,
+            reference: String
+        }
+    ],
+    products: [
+        {
+            name: String,
+            reference: String
+        }
+    ],
+    last_connection: Date
 })
 
-
+usersSchema.plugin(mongoosePaginate)
 const userModel = mongoose.model(usersCollection, usersSchema) 
 
 module.exports = { userModel }

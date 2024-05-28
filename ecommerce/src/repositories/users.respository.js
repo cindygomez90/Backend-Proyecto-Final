@@ -1,11 +1,11 @@
-const { UserDto } = require('../dto/userDto')
+const { UserDto } = require('../dto/userDto.js')
 
 class UserRepository {
     constructor (userDao) {
         this.dao = userDao
     }
 
-    getUsers = async () => await this.dao.get()
+    getUsers = async (limit, page) => await this.dao.get(Number(limit), Number(page))
     
     getUser = async (filter) => await this.dao.getBy(filter)
 
@@ -17,6 +17,9 @@ class UserRepository {
     updateUser = async (uid, userUpdate) => await this.dao.update(uid, userUpdate)
 
     deleteUser = async (uid) => await this.dao.delete({_id: uid})
+
+    //getInactiveUsers = async (days) => await this.dao.getInactiveUsers(days) //para días
+    getInactiveUsers = async (minutes) => await this.dao.getInactiveUsers(minutes)  //para minutos
 }
 
 
