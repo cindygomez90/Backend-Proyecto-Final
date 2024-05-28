@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer')
 const { configObject } = require('../config/connectDB.js')
 
-
 //configuración del transporte
 const transport = nodemailer.createTransport({
     service: 'gmail',

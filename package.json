@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js --mode development",
-    "dev": "nodemon src/app.js --mode production",
+    "start": "node ecommerce/src/app.js --mode development",
+    "dev": "nodemon ecommerce/src/app.js --mode production",
     "start:dev": "node --watch src/app.js",
     "test": "mocha test/carts.test.js"
   },
