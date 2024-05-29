@@ -8,19 +8,7 @@ class UserController {
     constructor () {
         this.userService = userService
     }
-
-    /*getUsers = async (request, responses)=>{
-        try {
-            const users = await this.userService.getUsers()
-            responses.json({
-                status: 'success',
-                result: users
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    }*/
-
+    
     getUsers = async (req, res) => {
         const { limit = 10, page = 1 } = req.query;
         try {
@@ -136,36 +124,6 @@ class UserController {
             res.status(500).json({ status: 'error', message: "Error del servidor" });
         }
     }
-
-    /*changeUserRole = async (req, res) => {
-        try {
-            const { uid } = req.params
-            const { role } = req.body
-
-            const user = await this.userService.getUser ({_id: uid})
-            if (!user) {
-                return res.status(404).json({
-                    status: 'error',
-                    message: 'Usuario no encontrado',
-                })
-            }
-
-            user.role = role
-            await user.save()
-
-            res.json({
-                status: 'success',
-                message: 'Rol de usuario actualizado',
-            })
-
-        } catch (error) {
-            console.error(error)
-            res.status(500).json({
-                status: 'error',
-                message: 'Error al cambiar el rol del usuario',
-            })
-        }
-    }*/
 
     changeUserRole = async (req, res) => {
         try {
@@ -306,9 +264,8 @@ class UserController {
                 });
             }
 
-            // Actualizar el rol del usuario
-            user.role = role;
-            await user.save();
+            user.role = role
+            await user.save()
 
             res.json({
                 status: 'success',

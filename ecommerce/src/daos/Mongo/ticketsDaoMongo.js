@@ -3,8 +3,7 @@ const { productModel } = require ('../Mongo/models/products.model.js')
 
 class TicketDaoMongo {
 
-    async create (ticketData) {
-        //return await ticketModel.create( ticketData )
+    async create (ticketData) {        
         const ticket = await ticketModel.create(ticketData)
         return ticket
     }

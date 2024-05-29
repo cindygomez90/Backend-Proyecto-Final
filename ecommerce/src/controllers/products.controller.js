@@ -10,66 +10,11 @@ const { sendMail } = require('../utils/sendMail.js')
         constructor () {
             this.productService = productService 
         }
-
-        /*getProducts = async (req, res) => {
-            try {
-                const { limit = 10, pageQuery = 1, category = '', order, status } = req.query
-                
-                const filter = {}
-                if (category) {
-                    filter.category = category
-                }
-        
-                if (status !== undefined) {
-                    filter.status = status === 'true' ? true : status === 'false' ? false : undefined
-                }
-        
-                const sortOptions = {}
-                if (order === 'asc') {
-                    sortOptions.price = 1
-                } else {
-                    sortOptions.price = -1
-                }
-
-                const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, page, totalPages } = await productModel.paginate(filter, { limit, page: pageQuery, sort: sortOptions, lean: true })
-        
-                if (!docs || docs.length === 0) {
-                    return res.status(404).json({
-                        msg: 'No existen productos',
-                        products: false
-                    })
-                }  
-                
-        
-                res.status(200).json({
-                    status: 'success',
-                    result: {
-                        products: docs,
-                        totalPages: totalPages,
-                        hasPrevPage: hasPrevPage,
-                        hasNextPage: hasNextPage,
-                        prevPage: prevPage,
-                        nextPage: nextPage,
-                        prevLink: prevPage ? `http://localhost:8080/api/products?page=${prevPage}` : null,
-                        nextLink: nextPage ? `http://localhost:8080/api/products?page=${nextPage}` : null,                    
-                        page: page,
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-                res.status(500).json({
-                    status: 'error',
-                    error: error.message,
-                })
-            }
-        }*/
         getProducts = async (req, res) => {
             try {
-                const { limit = 10, pageQuery = 1, category = '', order, status } = req.query
+                const { limit = 10, pageQuery = 1, category = '', order, status } = req.query                
                 
-                // Aquí obtienes el ID del carrito del LocalStorage
-                const cartId = req.headers.authorization.split(' ')[1]; // Obtener el token del header y extraer el ID del carrito
-                
+                const cartId = req.headers.authorization.split(' ')[1]; 
                 const filter = {}
                 if (category) {
                     filter.category = category
@@ -93,14 +38,13 @@ const { sendMail } = require('../utils/sendMail.js')
                         msg: 'No existen productos',
                         products: false
                     })
-                }  
-        
-                // Aquí agregas el ID del carrito al contexto de la vista de productos
+                }          
+                
                 res.status(200).json({
                     status: 'success',
                     result: {
                         products: docs,
-                        cartId: cartId, // Aquí envías el ID del carrito al cliente
+                        cartId: cartId, 
                         totalPages: totalPages,
                         hasPrevPage: hasPrevPage,
                         hasNextPage: hasNextPage,

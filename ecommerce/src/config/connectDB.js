@@ -23,7 +23,8 @@ const configObject = {
     gmail_pass: process.env.GMAIL_PASS_APP,
     twilio_sid: process.env.TWILIO_ACCOUNT_SID,
     twilio_token: process.env.TWILIO_AUTH_TOKEN,
-    twilio_number: process.env.TWILIO_NUMBER 
+    twilio_number: process.env.TWILIO_NUMBER,
+    stripe_secret_key: process.env.STRIPE_SECRET_KEY
 }
 
 console.log ('Configuración de la base de datos:', configObject)

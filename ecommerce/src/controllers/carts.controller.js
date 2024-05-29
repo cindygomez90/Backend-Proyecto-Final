@@ -16,11 +16,11 @@ class CartController {
     createCart = async (req, res, next) => {
         try {
             const result = await this.cartService.createCart();
-            console.log('ID del carrito creado:', result._id.toString()); // Asegúrate de imprimir el ID como cadena
+            console.log('ID del carrito creado:', result._id.toString())
             res.status(200).json({
                 status: "success",
                 payload: {
-                    cartId: result._id.toString() // Convertir el ObjectId a cadena
+                    cartId: result._id.toString()
                 }
             });
         } catch (error) {
@@ -29,32 +29,6 @@ class CartController {
         }
     }
     
-
-    /*getCart = async (req, res) => {
-        try {
-            const { cid } = req.params
-            const result = await this.cartService.getCart(cid)
-    
-            if (result.error) {
-                res.status(404).json({
-                    status: "error",
-                    message: result.error
-                })
-            } else {
-                res.send({
-                    status: "success",
-                    payload: result
-                })
-            }
-        } catch (error) {
-            console.error('Error al obtener el carrito:', error)
-            res.status(500).json({
-                status: "error",
-                message: "Error al obtener el carrito."
-            })
-        }
-    }*/
-
     getCart = async (req, res) => {
         try {
             const { cid } = req.params;
@@ -67,9 +41,8 @@ class CartController {
                 });
             }
     
-            // Calcular el total de la compra
             const total = cart.products.reduce((acc, cartProduct) => {
-                return acc + (cartProduct.product.price * cartProduct.quantity);
+                return acc + (cartProduct.product.price * cartProduct.quantity)
             }, 0);
 
             console.log(total)
@@ -89,7 +62,6 @@ class CartController {
             });
         }
     };
-    
 
     addProductToCart = async (req, res, next) => {
         let cid, pid  
@@ -120,11 +92,9 @@ class CartController {
                 
             }
     
-            // Verificar si el usuario es premium
+
             if (req.user && req.user.role === 'USER_PREMIUM') {
-            // Verificar si el producto pertenece al usuario
             if (product.owner === req.user.email) {
-            // Si el producto pertenece al usuario premium, devolver un mensaje de error
                 return res.status(403).json({
                 status: 'error',
                 message: 'No puedes agregar a tu carrito un producto que te pertenece.'
@@ -162,7 +132,6 @@ class CartController {
         }
     }
     
-
     updateCart = async (req, res) => {
         try {
             const { cid } = req.params

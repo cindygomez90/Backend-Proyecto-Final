@@ -13,7 +13,6 @@ const UserDaoMongo = require ('../daos/Mongo/usersDaoMongo.js')
 const userService = new UserDaoMongo()
 const { productModel} = require ('../daos/Mongo/models/products.model.js')
 const { cartModel} = require ('../daos/Mongo/models/carts.model.js')
-//const stripe = require('stripe')('tu_clave_secreta_de_stripe') - ver pago con Stripe
 const { authorization } = require ('../middleware/authentication.js') 
 const { passportCall } = require ('../middleware/pasportCall.js') 
 
@@ -164,13 +163,10 @@ viewsRouter.get('/tickets/:tid', async (req, res) => {
 })
 
 //vista para pasarela de pagos Stripe
-/*router.get('/pagar-con-stripe', async (req, res) => {
-    // Aquí puedes generar el pago con Stripe según los productos del ticket, etc.
-    // Por ejemplo, puedes crear una sesión de pago de Stripe y redirigir al usuario a la página de pago de Stripe.
-    // Consulta la documentación de Stripe para obtener más detalles sobre cómo manejar los pagos.
-    // https://stripe.com/docs/payments/checkout
-    res.send('Página de pago con Stripe');
-});*/
+//viewsRouter.get('/pagar-con-stripe', async (req, res) => {
+//    const urlPagoStripe = 'https://stripe.com'
+//    res.redirect(urlPagoStripe);
+//})
 
 
 //vista para cart por id

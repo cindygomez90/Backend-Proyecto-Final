@@ -62,17 +62,14 @@
                 method: 'DELETE'
             });
             if (response.ok) {
-                // Manejar la respuesta si es exitosa
-                console.log('Usuario eliminado exitosamente');
-                // Opcional: actualizar la página o realizar otras acciones después de eliminar
+                console.log('Usuario eliminado exitosamente')
             } else {
-                // Manejar la respuesta si hay errores
                 console.error('Error al eliminar usuario:', response.statusText);
             }
         } catch (error) {
             console.error('Error al eliminar usuario:', error);
         }
-        return false; // Para evitar que el formulario se envíe normalmente
+        return false
     }
 </script>
 

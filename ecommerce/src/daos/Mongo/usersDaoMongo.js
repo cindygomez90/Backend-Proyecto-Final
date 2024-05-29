@@ -6,16 +6,11 @@ class UserDaoMongo {
             limit: parseInt(limit, 10),
             page: parseInt(page, 10),
             lean: true
-        }
-        //const users = await userModel.paginate({}, { limit, page, lean: true });
+        }        
         const users = await userModel.paginate({}, options)
         return users
     }
         
-    //async get () {
-    //    return await userModel.find ({})
-    //}
-
     async getBy (filter) {
         return await userModel.findOne (filter)
     }

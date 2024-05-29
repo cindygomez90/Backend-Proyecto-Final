@@ -33,7 +33,6 @@
     console.log(`Eliminar producto con ID: ${id} del carrito con ID: ${cid}`);
 
     if (cid && cid !== 'undefined') {
-        // Si cid existe y no es "undefined", realizar la solicitud DELETE
         fetch(`/api/carts/${cid}/products/${id}`, {
             method: 'DELETE',
             headers: {
@@ -52,8 +51,7 @@
         .catch(function(error) {
             console.error('Error al eliminar el producto:', error);
         });
-    } else {
-        // Si cid no existe o es "undefined", mostrar un mensaje de error en la consola
+    } else {       
         console.error('El ID del carrito no está definido.');
     }
 }

@@ -31,11 +31,7 @@
         <li>
             <img src="{{this.thumbnail}}" alt="Imagen del Producto"><br>
             Nombre: {{this.title}} <br>
-            {{!Descripción: {{this.description}}<br>
             Precio: {{this.price}}<br>
-            {{!Código: {{this.code}}<br>
-            {{!Stock: {{this.stock}}<br>
-            {{!Categoría: {{this.category}}<br>
 
             <button onclick="addToCart('{{this._id}}', '{{this.title}}', {{this.price}})">Añadir al carrito</button>
             <button onclick="location.href='/products/{{this._id}}'">Ver detalle</button>
@@ -55,7 +51,7 @@
 <script>
     document.getElementById('ver-carrito').addEventListener('click', function() {
         const cartId = localStorage.getItem('cid');
-        console.log('ID del carrito:', cartId); // Para depuración
+        console.log('ID del carrito:', cartId); 
         if (cartId) {
             location.href = '/carts/' + cartId + '/detailscart';
         } else {
@@ -80,7 +76,7 @@
         })
         .then(function(data) {
             if (data && data.payload && data.payload.cartId) {
-                localStorage.setItem('cid', data.payload.cartId); // Guarda el ID del carrito en localStorage
+                localStorage.setItem('cid', data.payload.cartId)
                 addProductToCart(data.payload.cartId, productId, productName, productPrice);
             } else {
                 console.error('Respuesta inválida del servidor:', data);
