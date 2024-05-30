@@ -1,93 +1,88 @@
-<center class="mt-5">
-    <h2>Carrito de compra</h2>
-</center>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>detailscart</title>
+</head>
+<body>
+    <h1>Carrito de compra</h1>
 
-{{#if cart.products.length}}
-    {{#each cart.products}}
-        <div>
-            <img src="{{this.product.thumbnail}}" alt="Imagen del Producto" style="width: 10%;">
-            <label>Nombre: {{this.product.title}}</label>
-            <label>Precio: {{this.product.price}}</label>
-            <label>Cantidad: {{this.quantity}}</label>
-            <button class="btn btn-outline-danger" onclick="eliminarProduct('{{this.product._id}}')"><strong> X </strong></button>
-        </div>
-        <hr>
-    {{/each}}
     <div>
-        <label><strong>Total de la compra: ${{total}}</strong></label>
+        {{#if cart.products.length}}
+            {{#each cart.products}}
+                <div>
+                    <img src="{{this.product.thumbnail}}" alt="Imagen del Producto" style="width: 10%;">
+                    <label>Nombre: {{this.product.title}}</label>
+                    <label>Precio: {{this.product.price}}</label>
+                    <label>Cantidad: {{this.quantity}}</label>
+                    <button class="btn btn-outline-danger" onclick="eliminarProducto('{{../cart._id}}', '{{this.product._id}}')">Eliminar</button>
+                </div>
+                <hr>
+            {{/each}}
+            <div>
+                <label><strong>Total de la compra: ${{total}}</strong></label>
+            </div>
+
+            <button onclick="location.href='/products'">Seguir comprando</button>
+            <button id="terminar-compra" class="btn btn-outline-success" onclick="terminarCompra('{{cart._id}}')">Terminar compra</button>   
+        {{else}}
+            <center>
+                <p>No hay productos en el carrito <a href="/products">Seguir comprando</a></p>
+            </center>
+        {{/if}}
     </div>
 
-    <button onclick="location.href='/products'">Seguir comprando</button>
-    <button id="terminar-compra" class="btn btn-outline-success">Terminar compra</button>  
-{{else}}
-    <center>
-        <p>No hay productos en el carrito <a href="/products">Seguir comprando</a></p>
-    </center>
-{{/if}}
 
-    
 <script>
-
-    function eliminarProduct(id) {
-    const cid = localStorage.getItem('cid');
-    console.log(`Eliminar producto con ID: ${id} del carrito con ID: ${cid}`);
-
-    if (cid && cid !== 'undefined') {
-        fetch(`/api/carts/${cid}/products/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(function(res) {
-                if (!res.ok) {
-                    throw new Error(`HTTP error! Status: ${res.status}`);
+    async function eliminarProducto(cartId, productId) {
+        try {
+            const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-                return res.json();
-            })
-        .then(function(data) {
-            window.location.reload();
-        })
-        .catch(function(error) {
-            console.error('Error al eliminar el producto:', error);
-        });
-    } else {       
-        console.error('El ID del carrito no está definido.');
-    }
-}
+            });
 
-    const button = document.querySelector('#terminar-compra');
+            const result = await response.json();
 
-    function createTicket() {
-        const cid = localStorage.getItem('cid');
-
-        fetch(`/api/carts/${cid}/purchase`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            if (result.status === 'success') {
+                // Recargar la página o actualizar la vista del carrito
+                location.reload();
+            } else {
+                alert(result.message);
             }
-        })
-        .then(function(res) {
-            return res.json();
-        })
-        .then(function(data) {
-        console.log(data);
-        if (data.status === 'success') {
-            window.location.href = `/tickets/${data.ticketId}`; // Redirige a la vista del ticket generado
-        } else {
-            Toastify({
-                text: "Error al realizar la compra",
-                duration: 3000,
-                gravity: "top",
-                position: 'right',
-                backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                stopOnFocus: true,
-            }).showToast();
+        } catch (error) {
+            console.error('Error al eliminar el producto:', error);
+            alert('Hubo un problema al intentar eliminar el producto.');
         }
-    });
-}
+    }
 
-button.addEventListener('click', createTicket);
+    async function terminarCompra(cartId) {
+        try {
+            const response = await fetch(`/api/carts/${cartId}/purchase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                // Redirigir a la vista del ticket usando la ID del ticket
+                window.location.href = `/tickets/${result.ticketId}`;
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error al terminar la compra:', error);
+            alert('Hubo un problema al intentar finalizar la compra.');
+        }
+    }
 </script>
+
+</body>
+</html>
+
 

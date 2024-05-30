@@ -13,7 +13,7 @@ class CartController {
         this.ticketService = ticketService
     }
 
-    createCart = async (req, res, next) => {
+    /*createCart = async (req, res, next) => {
         try {
             const result = await this.cartService.createCart();
             console.log('ID del carrito creado:', result._id.toString())
@@ -95,6 +95,116 @@ class CartController {
 
             if (req.user && req.user.role === 'USER_PREMIUM') {
             if (product.owner === req.user.email) {
+                return res.status(403).json({
+                status: 'error',
+                message: 'No puedes agregar a tu carrito un producto que te pertenece.'
+                })
+            }
+        }
+
+
+            if (cart && cart.products && cart.products.length > 0) {
+                const productIndex = cart.products.findIndex(p => p.product.equals(pid))
+                
+                if (productIndex === -1) {
+                    cart.products.push({
+                        product: pid,
+                        quantity: 1
+                    })
+                } else {                    
+                    cart.products[productIndex].quantity += 1
+                }
+            } else {
+                cart.products = [{
+                    product: pid,
+                    quantity: 1
+                }]
+            }
+    
+            await cart.save()
+    
+            res.json({
+                status: 'success',
+                payload: cart,
+            })
+        } catch (error) {
+            next(error)
+        }
+    }*/
+
+    createCart = async (req, res, next)=> {
+        try {
+            const result = await this.cartService.createCart ()
+    
+            res.status(200).json ({
+                status: "succes",
+                payload: result
+            })
+        } catch (error) {
+            console.error('Error al crear el carrito:', error)
+            next (error)
+            }
+        }
+
+    getCart = async (req, res) => {
+        try {
+            const { cid } = req.params
+            const result = await this.cartService.getCart(cid)
+    
+            if (result.error) {
+                res.status(404).json({
+                    status: "error",
+                    message: result.error
+                })
+            } else {
+                res.send({
+                    status: "success",
+                    payload: result
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                status: "error",
+                message: "Error al obtener el carrito."
+            })
+        }
+    }
+
+    addProductToCart = async (req, res, next) => {
+        let cid, pid  
+    
+        try {
+            ({ cid, pid } = req.params)    
+            const cart = await this.cartService.getCart(cid)
+            
+            if (typeof cart === 'string') {                    
+                CustomError.createError({
+                    name: 'Error al identificar al carrito',
+                    cause: generateCartNotFoundErrorInfo(cid),   
+                    message: 'No se encuentra el carrito indicado',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+                
+            }
+            
+            const product = await this.productService.getProduct(pid)
+    
+            if (!product) {
+                CustomError.createError({
+                    name: 'Error al identificar el producto',
+                    cause: generateProductNotFoundErrorInfo(pid),   
+                    message: 'No se encuentra el producto indicado',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+                
+            }
+    
+            // Verificar si el usuario es premium
+            if (req.user && req.user.role === 'USER_PREMIUM') {
+            // Verificar si el producto pertenece al usuario
+            if (product.owner === req.user.email) {
+            // Si el producto pertenece al usuario premium, devolver un mensaje de error
                 return res.status(403).json({
                 status: 'error',
                 message: 'No puedes agregar a tu carrito un producto que te pertenece.'
@@ -270,14 +380,15 @@ class CartController {
                     purchasedProducts,
                 }
 
-                const createdTicket = await this.ticketService.createTicket(ticketData)
+            const createdTicket = await this.ticketService.createTicket(ticketData)
 
-                const remainingProducts = cart.products.filter(cartProduct => !failedProducts.includes(cartProduct.product.toString()))
-                
-                await this.cartService.updateCart (cid, { products: remainingProducts })
-                
-                return res.status(200).json({ status: 'success', ticketId: createdTicket._id })  
-
+            const remainingProducts = cart.products.filter(cartProduct => !failedProducts.includes(cartProduct.product.toString()))
+            
+            await this.cartService.updateCart (cid, { products: remainingProducts })
+            
+            return res.status(200).json({ 
+                status: 'success', 
+                ticketId: createdTicket._id })  
             } catch (error) {
                 console.error('Error interno al crear el ticket', error)
                 return res.status(500).json({ 

@@ -27,9 +27,9 @@
                     <form action="/api/users/role/{{uid}}" method="post">
                         <input type="hidden" name="_method" value="PUT">
                         <select name="role">
-                            <option value="USER" {{#if this.isUser}}selected{{/if}}>User</option>
-                            <option value="USER_PREMIUM" {{#if this.isPremiumUser}}selected{{/if}}>Premium User</option>
-                            <option value="ADMIN" {{#if this.isAdmin}}selected{{/if}}>Admin</option>
+                            <option value="USER" {{#if this.isUser}}selected{{/if}}>USER</option>
+                            <option value="USER_PREMIUM" {{#if this.isPremiumUser}}selected{{/if}}>USER_PREMIUM</option>
+                            <option value="ADMIN" {{#if this.isAdmin}}selected{{/if}}>ADMIN</option>
                         </select>
                         <button type="submit">Cambiar Rol</button>
                     </form>

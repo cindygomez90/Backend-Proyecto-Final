@@ -27,10 +27,14 @@ class UserDaoMongo {
         return await userModel.findByIdAndDelete (uid)
     }
 
-    async getInactiveUsers(days) {
-        //const thresholdDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-        const thresholdDate = new Date(Date.now() - minutes * 60 * 1000)    //para recibir minutos
-        return await userModel.findOne({ lastConnection: { $lt: thresholdDate } });
+    async getInactiveUsers() {
+        const dateThreshold = new Date();
+        dateThreshold.setMinutes(dateThreshold.getMinutes() - 30);
+
+        return await userModel.find({
+            last_connection: { $lt: dateThreshold },
+            isActive: true
+        });
     }
 }
 

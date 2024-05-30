@@ -36,7 +36,8 @@ class SessionController {
                 last_name,
                 email,
                 password: hashedPassword,
-                role: role || 'USER'
+                role: role || 'USER',
+                last_connection: new Date()
             }
             const result = await this.userService.createUser (newUser)
             
@@ -94,6 +95,9 @@ class SessionController {
             maxAge: 60*60*1000*24,  
             httpOnly: true 
         })
+
+        user.last_connection = new Date()
+        await user.save()
 
         const products = await this.productService.getProducts()
         responses.render('products', { user: userDto, products})

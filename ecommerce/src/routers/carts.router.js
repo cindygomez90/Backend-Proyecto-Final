@@ -28,7 +28,7 @@ cartsRouter.delete('/:cid/products/:pid', deleteProductFromCart)
 //Endpoint para eliminar todos los productos de un carrito
 cartsRouter.delete('/:cid', deleteAllProductsFromCart)  
 
-//Endpoint para finalizar el proceso de compra
+//Endpoint para finalizar el proceso de compra 
 cartsRouter.post('/:cid/purchase', passportCall ('jwt'), authorization (['USER']), purchaseCart)    
 
 

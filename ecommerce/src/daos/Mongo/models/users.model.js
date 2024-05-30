@@ -50,7 +50,10 @@ const usersSchema = new mongoose.Schema ({
             reference: String
         }
     ],
-    last_connection: Date
+    last_connection: {
+        type: Date,
+        default: Date.now
+    }
 })
 
 usersSchema.plugin(mongoosePaginate)

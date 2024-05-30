@@ -67,7 +67,8 @@ class UserController {
                 first_name,
                 last_name,
                 email,
-                password
+                password, 
+                last_connection: new Date()
             }
             
             const result = await this.userService.createUser (newUser)
@@ -110,8 +111,11 @@ class UserController {
 
     deleteInactiveUsers = async (req, res) => {
         try {
-            const inactiveUsers = await this.userService.getInactiveUsers(30 / 60 / 24) //  (2) para dos días
+            const inactiveUsers = await this.userService.getInactiveUsers() //  (2) para dos días
+            console.log('Usuarios inactivos:', inactiveUsers)
+            
             for (const user of inactiveUsers) {
+                console.log('Eliminando usuario:', user._id);
                 await this.userService.deleteUser(user._id);
                 await sendMail(user.email, 'Cuenta eliminada por inactividad', `<p>Estimado ${user.first_name},</p><p>Tu cuenta ha sido eliminada debido a inactividad.</p>`);
             }
@@ -130,7 +134,7 @@ class UserController {
             const { uid } = req.params;
             const { role } = req.body;
     
-            const user = await this.userService.getUser({ _id: uid });
+            const user = await this.userService.getUser({ _id: uid })
             console.log("Usuario obtenido de la base de datos:", user)
             if (!user) {
                 return res.status(404).json({
@@ -148,7 +152,7 @@ class UserController {
             }
     
             // Verificar si el usuario ha cargado los documentos requeridos
-            const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+            const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta']
             const uploadedDocuments = user.documents.map(doc => doc.name);
             console.log("Documentos subidos por el usuario:", uploadedDocuments)
 
@@ -156,8 +160,8 @@ class UserController {
             const normalizedUploadedDocuments = uploadedDocuments.map(doc => doc.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '_'));
             const normalizedRequiredDocuments = requiredDocuments.map(doc => doc.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
 
-            console.log("Documentos subidos normalizados:", normalizedUploadedDocuments);
-            console.log("Documentos requeridos normalizados:", normalizedRequiredDocuments);
+            console.log("Documentos subidos normalizados:", normalizedUploadedDocuments)
+            console.log("Documentos requeridos normalizados:", normalizedRequiredDocuments)
 
 
             const missingDocuments = normalizedRequiredDocuments.filter(doc => !normalizedUploadedDocuments.includes(doc))
@@ -173,8 +177,8 @@ class UserController {
             }
     
             // Actualizar el rol del usuario a premium
-            user.role = role;
-            await user.save();
+            user.role = role
+            await user.save()
             console.log("Respuesta enviada:", res)
             res.json({
                 status: 'success',
@@ -186,9 +190,9 @@ class UserController {
             res.status(500).json({
                 status: 'error',
                 message: 'Error al cambiar el rol del usuario',
-            });
+            })
         }
-    };
+    }
     
 
     uploadDocuments = async (req, res) => {

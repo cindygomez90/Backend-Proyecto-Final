@@ -16,8 +16,8 @@ class UserRepository {
 
     updateUser = async (uid, userUpdate) => await this.dao.update(uid, userUpdate)
 
-    deleteUser = async (uid) => await this.dao.delete({_id: uid})
-
+    deleteUser = async (uid) => await this.dao.delete(uid)
+    
     //getInactiveUsers = async (days) => await this.dao.getInactiveUsers(days) //para días
     getInactiveUsers = async (minutes) => await this.dao.getInactiveUsers(minutes)  //para minutos
 }

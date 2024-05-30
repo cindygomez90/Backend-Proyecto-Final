@@ -21,13 +21,13 @@ usersRouter.post('/', createUser)
 //Endpoint para modificar un usuario
 usersRouter.put('/:uid', updateUser)
 
-//Endpoint para eliminar un usuario
-usersRouter.delete('/:uid', deleteUser)
-
 //Endpoint para eliminar usuarios inactivos
 usersRouter.delete('/inactive', passportCall('jwt'), authorization(['ADMIN']), deleteInactiveUsers)
 
-//Endpoint para cambiar el rol de un usuario
+//Endpoint para eliminar un usuario
+usersRouter.delete('/:uid', deleteUser)
+
+//Endpoint para que el usuario pueda cambiar de rol
 usersRouter.put('/premium/:uid', passportCall('jwt'), authorization(['USER', 'USER_PREMIUM']), changeUserRole)
 
 // Endpoint para que el administrador cambie el rol de un usuario
