@@ -2,7 +2,6 @@ const socket = io()
 
 //manejo de formulario de carga de productos (vista realTimeProducts.handlebars)
 function addProduct() {
-    
     let title = document.getElementById("title").value
     let description = document.getElementById("description").value
     let price = document.getElementById("price").value
@@ -44,17 +43,17 @@ if (productList && Array.isArray(data)) {
     data.forEach((product) => {
     const productContainer = document.createElement("li")
         productContainer.innerHTML = `   
+        <img src="${product.thumbnail}" alt="Imagen del Producto"><br>
         Nombre: ${product.title}<br>
         Descripción: ${product.description}<br>
-        Precio: ${product.price}<br>
-        Imagen: ${product.thumbnail}<br>
+        Precio: ${product.price}<br>        
         Código: ${product.code}<br>
         Stock: ${product.stock}<br>
         Categoría: ${product.category}<br>
         
-        <button type="button" class="boton-eliminar" onclick="deleteProduct('${product._id}')">Eliminar</button>
+        <button type="button" class="boton" onclick="deleteProduct('${product._id}')">Eliminar</button>
         `;
-        productList.appendChild(productContainer);
+        productList.appendChild(productContainer)
     })
 } else {
     console.log("Error: La estructura de datos de 'data' no es válida.")

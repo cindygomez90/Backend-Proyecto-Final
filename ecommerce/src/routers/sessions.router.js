@@ -16,7 +16,6 @@ sessionsRouter.get('/failregister', failregister)
 sessionsRouter.post ('/login', login)
 sessionsRouter.get('/faillogin', faillogin)
 
-
 //Endpoint para acceder a current
 sessionsRouter.get('/current', passportCall ('jwt'), authorization (['ADMIN']), current)
 

@@ -156,7 +156,7 @@ class UserController {
             const uploadedDocuments = user.documents.map(doc => doc.name);
             console.log("Documentos subidos por el usuario:", uploadedDocuments)
 
-            // Normalizar los nombres de los documentos subidos
+            
             const normalizedUploadedDocuments = uploadedDocuments.map(doc => doc.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, '_'));
             const normalizedRequiredDocuments = requiredDocuments.map(doc => doc.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
 
@@ -260,7 +260,7 @@ class UserController {
             const { uid } = req.params;
             const { role } = req.body;
 
-            const user = await this.userService.getUser({ _id: uid });
+            const user = await this.userService.getUser({ _id: uid })
             if (!user) {
                 return res.status(404).json({
                     status: 'error',

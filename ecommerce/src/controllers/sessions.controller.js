@@ -109,7 +109,7 @@ class SessionController {
 
     current = async (request, responses) => {       
         try {
-            console.log('Objeto user recibido:', request.user)
+            //console.log('Objeto user recibido:', request.user)
             const userDto = new UserDto (request.user)
             
             if (!userDto) {

@@ -15,6 +15,7 @@ const { handleErrors } = require ('./middleware/errors-midd/index.js')
 const { addLogger } = require("./utils/logger.js")
 const methodOverride = require('method-override')
 
+
 const app = express()
 const PORT = configObject.port
 
@@ -50,8 +51,10 @@ const io = new Server (httpServer)
 
 let messages = []
 
+
+
 io.on('connection', async (socket) => {
-    console.log('cliente conectado')
+    //console.log('cliente conectado')
 
 //Mongo
     socket.on("addProduct", async (data) => {
@@ -61,12 +64,13 @@ io.on('connection', async (socket) => {
             price: data.price,
             thumbnail: data.thumbnail,
             code: data.code,
-            stock: data.stock,            
+            category: data.category,
+            stock: data.stock
         }
         try {
-            await productManager.createProduct(newProduct)
+            await productManager.create(newProduct)
 
-            const updatedProducts = await productManager.getProducts()
+            const updatedProducts = await productManager.get()
             io.emit("updateProducts", updatedProducts)
         } catch (error) {
             console.error("Error al agregar producto:", error);
@@ -78,18 +82,16 @@ io.on('connection', async (socket) => {
         const pid = data.pid
 
         try {
-            await productManager.deleteProduct(pid)
+            await productManager.delete(pid)
 
-            const updatedProducts = await productManager.getProducts()
+            const updatedProducts = await productManager.get()
             io.emit("updateProducts", updatedProducts)
         } catch (error) {
             console.error("Error al eliminar producto:", error);
             socket.emit("productError", { error: "Error al eliminar producto" })
         }
     })
-
-
-
+    
     socket.on('message', async (data) => {
         try {
             const newMessage = {

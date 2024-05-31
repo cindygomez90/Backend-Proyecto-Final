@@ -23,13 +23,13 @@ viewsRouter.get('/home', async (req, res) => {
         res.render('home', { products })
     } catch (error) {
         console.error(error)
-        res.render('error', { message: 'Error al obtener la lista de productos.' })
+        res.render ('error', { message: 'Error al obtener la lista de productos.' })
     }
 })
 
 
 //vista para realTimeProducts
-viewsRouter.get('/realtimeproducts', async (req, res) => {
+viewsRouter.get('/realtimeproducts',passportCall ('jwt'), authorization (['USER_PREMIUM','ADMIN']), async (req, res) => {
     try {
         const products = await productService.get()
         res.render('realTimeProducts', { products })
