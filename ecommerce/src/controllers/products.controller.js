@@ -135,23 +135,21 @@ const { sendMail } = require('../utils/sendMail.js')
                 })
             }
         }
-        
-        /*createProduct = async (request, responses, next)=>{                
+
+        createProduct = async (request, responses, next)=>{                
             try {                               
                 const productNew  = request.body
+
                 let owner = 'ADMIN'
 
                 if (request.user && request.user.role === 'USER_PREMIUM') {
-                    owner = request.user._id
-                } 
+                    owner = request.user.email
+                }
 
                 productNew.owner = owner
-    
-                // Asignar el ID del usuario autenticado como owner
-                productNew.owner = request.user._id;
 
                 //si alguno de los campos no viene se va a instanciar el error
-                if (!productNew.title || !productNew.price || !productNew.stock || !productNew.category) {
+                if (!productNew.title || !productNew.price || !productNew.stock) {
                     CustomError.createError({
                         name: 'Error en la creación de producto',
                         cause: generateProductErrorInfo(productNew),
@@ -169,39 +167,7 @@ const { sendMail } = require('../utils/sendMail.js')
             } catch (error) {
                 next(error)  
             }
-        }*/
-
-        createProduct = async (request, responses, next) => {
-            try {
-                const productNew = request.body;
-        
-                // Asignar el owner basado en el rol del usuario autenticado
-                if (request.user && request.user.role) {
-                    productNew.owner = request.user.role; // Asigna el rol del usuario como owner
-                } else {
-                    productNew.owner = 'ADMIN'; // Si no hay usuario autenticado, asigna 'ADMIN'
-                }
-        
-                // Verificar campos obligatorios
-                if (!productNew.title || !productNew.price || !productNew.stock || !productNew.category) {
-                    CustomError.createError({
-                        name: 'Error en la creación de producto',
-                        cause: generateProductErrorInfo(productNew),
-                        message: 'Error al intentar crear el producto',
-                        code: EErrors.PRODUCT_CREATION_ERROR
-                    });
-                }
-        
-                const result = await this.productService.createProduct(productNew);
-        
-                responses.send({
-                    status: 'success',
-                    result
-                });
-            } catch (error) {
-                next(error);
-            }
-        };
+        }
         
         
         updateProduct = async (req, res) => {
@@ -244,11 +210,8 @@ const { sendMail } = require('../utils/sendMail.js')
         deleteProduct = async (req, res) => {
             try {
                 const { pid } = req.params
-                console.log(`Producto ID: ${pid}`);
-                console.log(`Usuario autenticado: ${JSON.stringify(req.user)}`)
 
                 if (req.user && req.user.role === 'ADMIN') {    //verificar si usuario es ADMIN
-                console.log('El usuario es ADMIN');
                     const result = await this.productService.deleteProduct(pid)
                     if (!result) {
                         return res.status(404).json({ success: false, message: 'Producto no encontrado.' })
@@ -256,23 +219,19 @@ const { sendMail } = require('../utils/sendMail.js')
                     return res.json({ success: true, message: 'Producto eliminado correctamente.' })
                 }
         
-                const product = await this.productService.getProduct(pid)
-                console.log(`Producto obtenido: ${JSON.stringify(product)}`);
+                const product = await this.productService.getProduct(pid)                
                 if (product && req.user && req.user.role === 'USER_PREMIUM' && product.owner === req.user.email) {  //verificar si usuario es USER_PREMIUM
-                    console.log('El usuario es USER_PREMIUM y es dueño del producto')
                     const result = await this.productService.deleteProduct(pid)
                     if (!result) {
                         return res.status(404).json({ success: false, message: 'Producto no encontrado.' })
-                    }
-
+                    }                 
                     await sendMail(
                         req.user.email,
                         'Producto eliminado',
-                        `Hola ${req.user.name},\n\nTu producto ha sido eliminado correctamente.`
-                    )                    
+                        `Hola ${req.user.fullname},\n\nTu producto ha sido eliminado correctamente.`
+                    )                  
                     return res.json({ success: true, message: 'Producto eliminado correctamente.' })
-                }
-                console.log('Permisos insuficientes para eliminar el producto');
+                }                
                 return res.status(403).json({
                     success: false,
                     message: 'No tienes permisos para eliminar este producto.'
@@ -285,8 +244,7 @@ const { sendMail } = require('../utils/sendMail.js')
                     message: 'Error al eliminar el producto.' 
                 })
             }
-        }
-        
+        }        
     }
 
 
