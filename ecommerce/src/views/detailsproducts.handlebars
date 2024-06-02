@@ -24,7 +24,8 @@
     </div>
 
     <script>
-        let currentCart;
+        //let currentCart;
+        let currentCart = JSON.parse(localStorage.getItem('currentCart'))
 
         function addToCart(productId, productName, productPrice) {            
             if (!currentCart) {                
@@ -38,12 +39,13 @@
                     return response.json();
                 })
                 .then(function(data) {                    
-                    currentCart = data.payload;                    
-                    addProductToCart(currentCart._id, productId, productName, productPrice);
+                    currentCart = data.payload
+                    localStorage.setItem('currentCart', JSON.stringify(currentCart))                    
+                    addProductToCart(currentCart._id, productId, productName, productPrice)
                 })
                 .catch(function(error) {
                     console.error('Error al obtener o crear el carrito:', error);
-                });
+                })
             } else {                
                 addProductToCart(currentCart._id, productId, productName, productPrice);
             }
@@ -57,13 +59,13 @@
                 },
             })
             .then(function(response) {
-                return response.json();
+                return response.json()
             })
             .then(function(data) {                
-                alert(`Se ha añadido ${productName} a tu carrito`);
+                alert(`Se ha añadido ${productName} a tu carrito`)
             })
             .catch(function(error) {
-                console.error('Error al agregar el producto al carrito:', error);
+                console.error('Error al agregar el producto al carrito:', error)
             });
         }
     </script>

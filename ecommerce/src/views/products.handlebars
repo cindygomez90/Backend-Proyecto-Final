@@ -49,7 +49,8 @@
     </div>
 
     <script>
-        let currentCart;
+        //let currentCart;
+        let currentCart = JSON.parse(localStorage.getItem('currentCart'))
 
         function addToCart(productId, productName, productPrice) {
             fetch('/api/sessions/current', {
@@ -79,6 +80,7 @@
                     })
                     .then(function(data) {
                         currentCart = data.payload;
+                        localStorage.setItem('currentCart', JSON.stringify(currentCart))
                         addProductToCart(currentCart._id, productId, productName, productPrice);
                     })
                     .catch(function(error) {

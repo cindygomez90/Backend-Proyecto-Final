@@ -65,7 +65,8 @@ io.on('connection', async (socket) => {
             thumbnail: data.thumbnail,
             code: data.code,
             category: data.category,
-            stock: data.stock
+            stock: data.stock,
+            owner: data.owner
         }
         try {
             await productManager.create(newProduct)

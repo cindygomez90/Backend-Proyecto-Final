@@ -47,10 +47,11 @@
             const result = await response.json();
 
             if (result.status === 'success') {
-                // Recargar la página o actualizar la vista del carrito
-                location.reload();
+                const updatedCart = result.payload;
+                localStorage.setItem('currentCart', JSON.stringify(updatedCart))
+                location.reload()
             } else {
-                alert(result.message);
+                alert(result.message)
             }
         } catch (error) {
             console.error('Error al eliminar el producto:', error);
@@ -67,19 +68,27 @@
                 }
             });
 
-            const result = await response.json();
+            const result = await response.json()
 
             if (result.status === 'success') {
-                // Redirigir a la vista del ticket usando la ID del ticket
-                window.location.href = `/tickets/${result.ticketId}`;
+                localStorage.removeItem('currentCart')
+                alert('Su ticket de compra se generó con éxito.')
+                window.location.href = `/tickets/${result.ticketId}`
             } else {
-                alert(result.message);
+                alert(result.message)
             }
         } catch (error) {
-            console.error('Error al terminar la compra:', error);
-            alert('Hubo un problema al intentar finalizar la compra.');
+            console.error('Error al terminar la compra:', error)
+            alert('Hubo un problema al intentar finalizar la compra.')
         }
+
+        window.onload = function() {
+            const savedCart = JSON.parse(localStorage.getItem('currentCart'))
+            if (savedCart) {
+                currentCart = savedCart
+            }
     }
+}
 </script>
 
 </body>

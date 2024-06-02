@@ -32,7 +32,7 @@ viewsRouter.get('/home', async (req, res) => {
 viewsRouter.get('/realtimeproducts',passportCall ('jwt'), authorization (['USER_PREMIUM','ADMIN']), async (req, res) => {
     try {
         const products = await productService.get()
-        res.render('realTimeProducts', { products })
+        res.render('realTimeProducts', { products, user: req.user })
         
     } catch (error) {
         console.log(error)
@@ -245,23 +245,23 @@ viewsRouter.get('/admin/users', passportCall('jwt'), authorization(['ADMIN']), a
             totalPages
         });
     } catch (error) {
-        res.render('error', { message: 'Error al obtener la lista de usuarios.' });
+        res.render('error', { message: 'Error al obtener la lista de usuarios.' })
     }
 })
 
 //vista para administrar usuarios por el administrador
 viewsRouter.get('/profile', passportCall('jwt'), authorization(['USER', 'USER_PREMIUM']), async (req, res) => {
     try {
-        console.log('Usuario autenticado:', req.user);
-        const user = req.user; // `req.user` contiene la información del usuario autenticado
+        console.log('Usuario autenticado:', req.user)
+        const user = req.user
         if (!user) {
-            return res.status(401).json({ status: 'error', error: 'Unauthorized' });
+            return res.status(401).json({ status: 'error', error: 'Unauthorized' })
         }
-        console.log('UID:', user.id); // Asegúrate de que el ID del usuario esté presente aquí
-        res.render('profile', { uid: user.id }); // Usa `user.id` en lugar de `user._id`
+        console.log('UID:', user.id)
+        res.render('profile', { uid: user.id })
     } catch (error) {
         console.error('Error al renderizar la vista de perfil:', error);
-        res.render('error', { message: 'Error al renderizar la vista de perfil.' });
+        res.render('error', { message: 'Error al renderizar la vista de perfil.' })
     }
 });
 

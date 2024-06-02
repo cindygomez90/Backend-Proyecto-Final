@@ -9,13 +9,15 @@ function addProduct() {
     let code = document.getElementById("code").value
     let stock = document.getElementById("stock").value
     let category = document.getElementById("category").value
+
+    let userEmail = document.getElementById("userEmail").value
     
     if (parseFloat(price) < 0 || parseInt(stock) < 0) {
         alert("El precio y el stock no pueden ser números negativos.")
         return;
     }
 
-    socket.emit("addProduct", { title, description, price, thumbnail, code, stock, category})
+    socket.emit("addProduct", { title, description, price, thumbnail, code, stock, category,  owner: userEmail})
 
     document.getElementById("title").value = ""
     document.getElementById("description").value = ""

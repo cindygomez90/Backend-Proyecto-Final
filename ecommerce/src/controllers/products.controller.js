@@ -64,61 +64,6 @@ const { sendMail } = require('../utils/sendMail.js')
             }
         }
 
-        /*getProducts = async (req, res) => {
-            try {
-                const { limit = 10, pageQuery = 1, category = '', order, status } = req.query                
-                
-                const cartId = req.headers.authorization.split(' ')[1]; 
-                const filter = {}
-                if (category) {
-                    filter.category = category
-                }
-        
-                if (status !== undefined) {
-                    filter.status = status === 'true' ? true : status === 'false' ? false : undefined
-                }
-        
-                const sortOptions = {}
-                if (order === 'asc') {
-                    sortOptions.price = 1
-                } else {
-                    sortOptions.price = -1
-                }
-        
-                const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, page, totalPages } = await productModel.paginate(filter, { limit, page: pageQuery, sort: sortOptions, lean: true })
-        
-                if (!docs || docs.length === 0) {
-                    return res.status(404).json({
-                        msg: 'No existen productos',
-                        products: false
-                    })
-                }          
-                
-                res.status(200).json({
-                    status: 'success',
-                    result: {
-                        products: docs,
-                        cartId: cartId, 
-                        totalPages: totalPages,
-                        hasPrevPage: hasPrevPage,
-                        hasNextPage: hasNextPage,
-                        prevPage: prevPage,
-                        nextPage: nextPage,
-                        prevLink: prevPage ? `http://localhost:8080/api/products?page=${prevPage}` : null,
-                        nextLink: nextPage ? `http://localhost:8080/api/products?page=${nextPage}` : null,                    
-                        page: page,
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-                res.status(500).json({
-                    status: 'error',
-                    error: error.message,
-                })
-            }
-        }*/
-        
-
         getProduct = async (req, res)=>{  
             try {      
                 const { pid } = req.params        
@@ -140,12 +85,7 @@ const { sendMail } = require('../utils/sendMail.js')
             try {                               
                 const productNew  = request.body
 
-                let owner = 'ADMIN'
-
-                if (request.user && request.user.role === 'USER_PREMIUM') {
-                    owner = request.user.email
-                }
-
+                let owner = request.user ? request.user.email : 'ADMIN'
                 productNew.owner = owner
 
                 //si alguno de los campos no viene se va a instanciar el error
@@ -229,7 +169,7 @@ const { sendMail } = require('../utils/sendMail.js')
                         req.user.email,
                         'Producto eliminado',
                         `Hola ${req.user.fullname},\n\nTu producto ha sido eliminado correctamente.`
-                    )                  
+                    )                 
                     return res.json({ success: true, message: 'Producto eliminado correctamente.' })
                 }                
                 return res.status(403).json({
