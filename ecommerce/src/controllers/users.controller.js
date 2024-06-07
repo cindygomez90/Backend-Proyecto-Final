@@ -111,12 +111,12 @@ class UserController {
 
     deleteInactiveUsers = async (req, res) => {
         try {
-            const inactiveUsers = await this.userService.getInactiveUsers() //  (2) para dos días
+            const inactiveUsers = await this.userService.getInactiveUsers()
             console.log('Usuarios inactivos:', inactiveUsers)
             
             for (const user of inactiveUsers) {
-                console.log('Eliminando usuario:', user._id);
-                await this.userService.deleteUser(user._id);
+                console.log('Eliminando usuario:', user._id)
+                await this.userService.deleteUser(user._id)
                 await sendMail(user.email, 'Cuenta eliminada por inactividad', `<p>Estimado ${user.first_name},</p><p>Tu cuenta ha sido eliminada debido a inactividad.</p>`);
             }
             res.status(200).send({
@@ -166,7 +166,6 @@ class UserController {
 
             const missingDocuments = normalizedRequiredDocuments.filter(doc => !normalizedUploadedDocuments.includes(doc))
             
-            //const missingDocuments = requiredDocuments.filter(doc => !uploadedDocuments.includes(doc));
             console.log("Documentos faltantes:", missingDocuments)
             if (missingDocuments.length > 0) {
                 return res.status(400).json({
@@ -194,7 +193,6 @@ class UserController {
         }
     }
     
-
     uploadDocuments = async (req, res) => {
         try {
             const { uid } = req.params

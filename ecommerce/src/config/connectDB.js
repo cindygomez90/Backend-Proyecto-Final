@@ -4,7 +4,7 @@ const { mode } = program.opts()
 const MongoSingleton = require("../utils/mongoSingleton")
 
 console.log('Modo:', mode)
-console.log('Ruta del archivo .env:', mode === 'development' ? './.env.development' : './.env.production')
+//console.log('Ruta del archivo .env:', mode === 'development' ? './.env.development' : './.env.production')
 
 dotenv.config({ 
     path: mode === 'development' ? './.env.development' : './.env.production'   
@@ -26,8 +26,6 @@ const configObject = {
     twilio_number: process.env.TWILIO_NUMBER,
     stripe_secret_key: process.env.STRIPE_SECRET_KEY
 }
-
-console.log ('Configuración de la base de datos:', configObject)
 
 const connectBD = async () => {  
     try {

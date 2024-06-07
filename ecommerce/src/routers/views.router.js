@@ -72,9 +72,10 @@ viewsRouter.post('/api/messages/sendMessage', async (req, res) => {
 })
 
 //vista para products
-viewsRouter.get('/products', async (req, res) => {    
+viewsRouter.get('/products', async (req, res) => {   
     const {limit = 10, pageQuery = 1, category, order, status} = req.query   
-    
+    const user = req.user
+
     const filter = {}
         if (category) {
             filter.category = category;
@@ -102,6 +103,7 @@ viewsRouter.get('/products', async (req, res) => {
     } = await productModel.paginate(filter, {limit, page: pageQuery, sort: sortOptions, lean: true})
 
     res.render('products', {
+        user,
         products: docs,
         totalPages: totalPages,
         hasPrevPage, 
@@ -112,25 +114,13 @@ viewsRouter.get('/products', async (req, res) => {
     })
 })
 
-//vista para detailsproducts
-viewsRouter.get('/products/:pid', async (req, res) => {
-    try {
-        const { pid } = req.params;
-        const product = await productService.getBy(pid);
-        res.render('detailsproducts', { product });
-    } catch (error) {
-        console.error('Error al obtener el detalle del producto:', error);
-        res.render('error', { message: 'Error al obtener el detalle del producto.' });
-    }
-})
-
 //vista para detailscart
 viewsRouter.get('/carts/:cid/detailscart', async (req, res) => {
     try {
         const { cid } = req.params;
         const cart = await cartModel.findOne({_id: cid}).populate('products.product')
         if (!cart) {
-            return res.render('error', { message: 'El carrito no existe.' });
+            return res.render('errorpagina', { message: 'El carrito no existe.' })
         }
 
         const total = cart.products.reduce((acc, cartProduct) => {
@@ -141,8 +131,8 @@ viewsRouter.get('/carts/:cid/detailscart', async (req, res) => {
 
         res.render('detailscart', { cart, total, isEmpty })
     } catch (error) {
-        console.error('Error al obtener el detalle del carrito:', error);
-        res.render('error', { message: 'Error al obtener el detalle del carrito.' });
+        console.error('Error al obtener el detalle del carrito:', error)
+        res.render('errorpagina', { message: 'Error al obtener el detalle del carrito.' })
     }
 })
 
@@ -161,13 +151,6 @@ viewsRouter.get('/tickets/:tid', async (req, res) => {
         res.render('error', { message: 'Error al obtener el ticket.' })
     }
 })
-
-//vista para pasarela de pagos Stripe
-//viewsRouter.get('/pagar-con-stripe', async (req, res) => {
-//    const urlPagoStripe = 'https://stripe.com'
-//    res.redirect(urlPagoStripe);
-//})
-
 
 //vista para cart por id
 viewsRouter.get('/carts/:cid', async (req, res) => {
@@ -204,9 +187,9 @@ viewsRouter.get('/reset-password', (req, res) => {
 
 //vista para usuarios
 viewsRouter.get('/users', async (req, res) => {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10 } = req.query
     try {
-        const { docs: users, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await userService.get(Number(limit), Number(page));
+        const { docs: users, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages } = await userService.get(Number(limit), Number(page))
     
         res.render('users', {
             users,

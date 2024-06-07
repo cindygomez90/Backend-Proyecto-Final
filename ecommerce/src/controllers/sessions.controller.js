@@ -68,8 +68,7 @@ class SessionController {
     login = async (request, responses)=>{
         const {email, password} = request.body       
         
-        const user = await this.userService.getUser ({email}) 
-        console.log (user)
+        const user = await this.userService.getUser ({email})         
         if (!user) {
             return responses.send ({
                 status: 'error', 
@@ -109,7 +108,6 @@ class SessionController {
 
     current = async (request, responses) => {       
         try {
-            //console.log('Objeto user recibido:', request.user)
             const userDto = new UserDto (request.user)
             
             if (!userDto) {
@@ -163,8 +161,6 @@ class SessionController {
                 user.email, 
                 'Restablecer contraseña', 
                 `<p>Haga clic en el siguiente enlace para restablecer su contraseña:</p><a href="${resetLink}">${resetLink}</a>`)
-
-            //console.log("Enlace para restablecer contraseña:", resetLink)
             
             return res.status(200).json({ message: 'Se ha enviado un correo electrónico con instrucciones para restablecer la contraseña.' })
 

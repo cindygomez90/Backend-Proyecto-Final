@@ -14,7 +14,7 @@
                 <div>
                     <img src="{{this.product.thumbnail}}" alt="Imagen del Producto" style="width: 10%;">
                     <label>Nombre: {{this.product.title}}</label>
-                    <label>Precio: {{this.product.price}}</label>
+                    <label>Precio: ${{this.product.price}}</label>
                     <label>Cantidad: {{this.quantity}}</label>
                     <button class="btn btn-outline-danger" onclick="eliminarProducto('{{../cart._id}}', '{{this.product._id}}')">Eliminar</button>
                 </div>
@@ -24,7 +24,6 @@
                 <label><strong>Total de la compra: ${{total}}</strong></label>
             </div>
 
-            <button onclick="location.href='/products'">Seguir comprando</button>
             <button id="terminar-compra" class="btn btn-outline-success" onclick="terminarCompra('{{cart._id}}')">Terminar compra</button>   
         {{else}}
             <center>
@@ -42,9 +41,9 @@
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            });
+            })
 
-            const result = await response.json();
+            const result = await response.json()
 
             if (result.status === 'success') {
                 const updatedCart = result.payload;
@@ -54,8 +53,8 @@
                 alert(result.message)
             }
         } catch (error) {
-            console.error('Error al eliminar el producto:', error);
-            alert('Hubo un problema al intentar eliminar el producto.');
+            console.error('Error al eliminar el producto:', error)
+            alert('Hubo un problema al intentar eliminar el producto.')
         }
     }
 

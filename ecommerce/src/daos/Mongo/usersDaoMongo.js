@@ -34,7 +34,7 @@ class UserDaoMongo {
         return await userModel.find({
             last_connection: { $lt: dateThreshold },
             isActive: true
-        });
+        })
     }
 }
 

@@ -13,125 +13,6 @@ class CartController {
         this.ticketService = ticketService
     }
 
-    /*createCart = async (req, res, next) => {
-        try {
-            const result = await this.cartService.createCart();
-            console.log('ID del carrito creado:', result._id.toString())
-            res.status(200).json({
-                status: "success",
-                payload: {
-                    cartId: result._id.toString()
-                }
-            });
-        } catch (error) {
-            console.error('Error al crear el carrito:', error);
-            next(error);
-        }
-    }
-    
-    getCart = async (req, res) => {
-        try {
-            const { cid } = req.params;
-            const cart = await this.cartService.getCart(cid);
-    
-            if (cart.error) {
-                return res.status(404).json({
-                    status: "error",
-                    message: cart.error
-                });
-            }
-    
-            const total = cart.products.reduce((acc, cartProduct) => {
-                return acc + (cartProduct.product.price * cartProduct.quantity)
-            }, 0);
-
-            console.log(total)
-    
-            res.status(200).json({
-                status: "success",
-                payload: {
-                    cart,
-                    total
-                }
-            });
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                status: "error",
-                message: "Error al obtener el carrito."
-            });
-        }
-    };
-
-    addProductToCart = async (req, res, next) => {
-        let cid, pid  
-    
-        try {
-            ({ cid, pid } = req.params)    
-            const cart = await this.cartService.getCart(cid)
-            
-            if (typeof cart === 'string') {                    
-                CustomError.createError({
-                    name: 'Error al identificar al carrito',
-                    cause: generateCartNotFoundErrorInfo(cid),   
-                    message: 'No se encuentra el carrito indicado',
-                    code: EErrors.CART_NOT_FOUND_ERROR
-                })
-                
-            }
-            
-            const product = await this.productService.getProduct(pid)
-    
-            if (!product) {
-                CustomError.createError({
-                    name: 'Error al identificar el producto',
-                    cause: generateProductNotFoundErrorInfo(pid),   
-                    message: 'No se encuentra el producto indicado',
-                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
-                })
-                
-            }
-    
-
-            if (req.user && req.user.role === 'USER_PREMIUM') {
-            if (product.owner === req.user.email) {
-                return res.status(403).json({
-                status: 'error',
-                message: 'No puedes agregar a tu carrito un producto que te pertenece.'
-                })
-            }
-        }
-
-
-            if (cart && cart.products && cart.products.length > 0) {
-                const productIndex = cart.products.findIndex(p => p.product.equals(pid))
-                
-                if (productIndex === -1) {
-                    cart.products.push({
-                        product: pid,
-                        quantity: 1
-                    })
-                } else {                    
-                    cart.products[productIndex].quantity += 1
-                }
-            } else {
-                cart.products = [{
-                    product: pid,
-                    quantity: 1
-                }]
-            }
-    
-            await cart.save()
-    
-            res.json({
-                status: 'success',
-                payload: cart,
-            })
-        } catch (error) {
-            next(error)
-        }
-    }*/
-
     createCart = async (req, res, next)=> {
         try {
             const result = await this.cartService.createCart ()
@@ -150,6 +31,7 @@ class CartController {
         try {
             const { cid } = req.params
             const result = await this.cartService.getCart(cid)
+            console.log("Resultado de getCart:", result)
     
             if (result.error) {
                 res.status(404).json({
@@ -176,7 +58,8 @@ class CartController {
     
         try {
             ({ cid, pid } = req.params)    
-            const cart = await this.cartService.getCart(cid)
+
+            const cart = await this.cartService.getCart(cid)            
             
             if (typeof cart === 'string') {                    
                 CustomError.createError({
@@ -189,6 +72,7 @@ class CartController {
             }
             
             const product = await this.productService.getProduct(pid)
+            
     
             if (!product) {
                 CustomError.createError({
@@ -232,6 +116,7 @@ class CartController {
             }
     
             await cart.save()
+            console.log("Carrito guardado exitosamente:", cart)
     
             res.json({
                 status: 'success',
@@ -345,63 +230,57 @@ class CartController {
         }
     }
 
+    
+
     purchaseCart = async (req, res) => {
         try {
-                const { cid } = req.params
-                const userCart = req.user.email
-                const cart = await this.cartService.getCart(cid)
-                
-                if (!userCart || cart.products.length === 0) {
-                    return res.status(400).json({ status: 'error', error: 'El carrito está vacío.' })
+            const { cid } = req.params
+            const userCart = req.user.email
+            const cart = await this.cartService.getCart(cid)
+            
+            if (!userCart || cart.products.length === 0) {
+                return res.status(400).json({ status: 'error', error: 'El carrito está vacío.' })
+            }
+
+            const purchasedProducts = []   
+            const failedProducts = []
+            let totalAmount = 0
+            
+            for (const cartProduct of cart.products) {
+                const { product, quantity } = cartProduct
+
+                if (product.stock >= quantity) {
+                    totalAmount += product.price * quantity
+                    purchasedProducts.push(cartProduct.product)
+                } else {
+                    failedProducts.push(product._id)
                 }
+            }
 
-
-                const purchasedProducts = []   
-                const failedProducts = []
-
-            try {
-                let totalAmount = 0
-                for (const cartProduct of cart.products) {
-                    const { product, quantity } = cartProduct
-                    
-                    if (product.stock >= quantity) {
-                        totalAmount += product.price * quantity
-                        purchasedProducts.push(cartProduct.product)
-                    } else {
-                        failedProducts.push(product._id)
-                    }
-                }
-
-                const ticketData = {
-                    code: generateUniqueCode(), 
-                    purchase_datetime: new Date(),
-                    amount: totalAmount,
-                    purchaser: userCart, 
-                    purchasedProducts,
-                }
+            const ticketData = {
+                code: generateUniqueCode(), 
+                purchase_datetime: new Date(),
+                amount: totalAmount,
+                purchaser: userCart, 
+                purchasedProducts,
+            }
 
             const createdTicket = await this.ticketService.createTicket(ticketData)
 
-            const remainingProducts = cart.products.filter(cartProduct => !failedProducts.includes(cartProduct.product.toString()))
+            cart.products = cart.products.filter(cartProduct => !failedProducts.includes(cartProduct.product.toString()))
             
-            await this.cartService.updateCart (cid, { products: remainingProducts })
+            await cart.save()
             
             return res.status(200).json({ 
                 status: 'success', 
-                ticketId: createdTicket._id })  
-            } catch (error) {
-                console.error('Error interno al crear el ticket', error)
-                return res.status(500).json({ 
-                    status: 'error', 
-                    error: 'Error al crear el ticket de compra.' 
-                })
-            }
+                ticketId: createdTicket._id 
+            })
         } catch (error) {
-            console.error('Error interno al recuperar el carrito', error)
-            return res.status(500).json({
-                status: 'error',
-                error: 'Error al procesar la compra.',
-            })   
+            console.error('Error interno al procesar la compra:', error)
+            return res.status(500).json({ 
+                status: 'error', 
+                error: 'Error al procesar la compra.' 
+            })
         }
     }
 }

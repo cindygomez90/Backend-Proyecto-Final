@@ -8,6 +8,7 @@ class CartsDaoMongo {
     
     async getBy(cid) {
             const cart = await cartModel.findOne({_id:cid})
+            console.log("Cart encontrado en getBy:", cart)
             if (!cart) {
                 return { error: 'No se encuentra el id del carrito indicado' }
             }
@@ -16,6 +17,7 @@ class CartsDaoMongo {
 
     async addProductToCart(cid, pid) {
                 const cart = await cartModel.findOne({_id: cid})
+                console.log("Cart obtenido en addProductToCart:", cart)
                 if (!cart) {
                     return 'No existe el carrito'
                 }

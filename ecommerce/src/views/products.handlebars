@@ -12,32 +12,37 @@
     
     <div class="mensaje-bienvenida">
         {{#if user}}
+        <div>
             <h2>Bienvenid@, {{user.first_name}}!</h2>
-            <div class="user-actions">
-                <form action="/api/sessions/logout" method="POST" class="boton-cerrar">
-                    <button type="submit">Cerrar sesión</button>
-                </form>
-                <button class="perfil-btn" onclick="location.href='/profile'">Mi Perfil</button>
-            </div>
-        {{/if}}
+        </div>
+        <div class="user-actions">
+            <form action="/api/sessions/logout" method="POST" class="boton-cerrar">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+            <button class="perfil-btn" onclick="location.href='/profile'">Mi Perfil</button>
+        </div>
+        {{/if}}            
     </div>
 
     <button id="ver-carrito" class="boton-ver-carrito">Ver Carrito</button>
 
     <h2>Esta es nuestra tienda online!</h2>
 
-    <div>
+    <div class="product-list">
         {{#each products}}
-        <li>
+        <li class="product-item">
             <img src="{{this.thumbnail}}" alt="Imagen del Producto"><br>
-            Nombre: {{this.title}} <br>            
-            Precio: ${{this.price}}<br>
+            Nombre: {{this.title}} <br>           
+            Precio: ${{this.price}}<br>    
 
+            {{!-- <button onclick="location.href='/products/{{this._id}}'">Ver detalle</button> --}}
+            
             <button onclick="addToCart('{{this._id}}', '{{this.title}}', {{this.price}})">Añadir al carrito</button>
-            <button onclick="location.href='/products/{{this._id}}'">Ver detalle</button>
+        
         </li>
         {{/each}}
 
+    <div class="pagination">
         {{! configuración de las páginas}}
         {{#if hasPrevPage}}
         <a href="products?pageQuery={{prevPage}}" class="pag-link">Anterior</a>
@@ -49,82 +54,59 @@
     </div>
 
     <script>
-        //let currentCart;
-        let currentCart = JSON.parse(localStorage.getItem('currentCart'))
+        let currentCart
 
-        function addToCart(productId, productName, productPrice) {
-            fetch('/api/sessions/current', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(function(response) {
-                if (response.status === 401) {
-                    alert('Debe estar logueado para agregar productos al carrito.')
-                    window.location.href = '/login'
-                    throw new Error('No autenticado')
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                if (!currentCart) {
-                    fetch('/api/carts', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(function(response) {
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        currentCart = data.payload;
-                        localStorage.setItem('currentCart', JSON.stringify(currentCart))
-                        addProductToCart(currentCart._id, productId, productName, productPrice);
-                    })
-                    .catch(function(error) {
-                        console.error('Error al obtener o crear el carrito:', error);
-                    });
-                } else {
-                    addProductToCart(currentCart._id, productId, productName, productPrice);
-                }
-            })
-            .catch(function(error) {
-                console.error('Error de autenticación:', error);
-            });
+        function addToCart(productId, productName, productPrice) {            
+            if (!currentCart) {                
+                fetch('/api/carts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(function(response) {
+                    return response.json()
+                })
+                .then(function(data) {                    
+                    currentCart = data.payload;                    
+                    addProductToCart(currentCart._id, productId, productName, productPrice)
+                })
+                .catch(function(error) {
+                    console.error('Error al obtener o crear el carrito:', error)
+                });
+            } else {                
+                addProductToCart(currentCart._id, productId, productName, productPrice)
+            }
         }
 
-        function addProductToCart(cartId, productId, productName, productPrice) {
-            fetch(`/api/carts/${cartId}/products/${productId}`, {
+        function addProductToCart(cartId, productId, productName, productPrice) {            
+            fetch (`/api/carts/${cartId}/products/${productId}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
             })
             .then(function(response) {
-                if (response.status === 401) {
-                    alert('Debe estar logueado para agregar productos al carrito.');
-                    window.location.href = '/login';
-                    throw new Error('No autenticado');
-                }
-                return response.json();
+                return response.json()
             })
-            .then(function(data) {
-                alert(`Se ha añadido ${productName} a tu carrito`);
+            .then(function(data) {                
+                alert(`Se ha añadido ${productName} a tu carrito`)
             })
             .catch(function(error) {
-                console.error('Error al agregar el producto al carrito:', error);
+                console.error('Error al agregar el producto al carrito:', error)
             });
         }
 
-        document.getElementById('ver-carrito').addEventListener('click', function() {
-            if (currentCart) {
-                window.location.href = `/carts/${currentCart._id}/detailscart`;
-            } else {
-                alert('Tu carrito está vacío');
-            }
-        });
+        document.getElementById('ver-carrito').addEventListener('click', function() {        
+        if (currentCart) {
+            window.location.href = `/carts/${currentCart._id}/detailscart`
+        } else {
+            alert('Tu carrito está vacío .')
+        }
+
+    })
+
     </script>
+
 </body>
 </html>

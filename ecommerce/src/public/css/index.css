@@ -50,13 +50,20 @@ li img {
 
 .mensaje-bienvenida {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     align-items: center;
     padding: 10px;
 }
 
-.boton-cerrar {
-    margin-left: 20px;
+.boton-ver-carrito {
+    margin-bottom: 10px; 
+}
+
+.user-actions {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    margin-left: 20px; 
 }
 
 .form {
@@ -80,7 +87,6 @@ a:visited {
     color: black;
 }
 
-/* Nuevas reglas añadidas */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -98,35 +104,55 @@ th {
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    background-color: white; 
+    padding: 10px; 
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
+    z-index: 999; 
 }
 
 .pagination a {
     margin: 0 5px;
 }
 
-.user-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-left: 20px; 
+.pag-link {
+    margin: 0 10px;
+    text-decoration: none;
+    color: blue;
 }
 
-.user-actions button,
-.user-actions form {
+.pag-actual {
+    font-weight: bold;
+}
+
+
+.links {
+    text-align: center;
+    margin-top: 20px;
+}
+.links a {
+    display: block;
     margin-bottom: 10px;
-    width: 150px; 
 }
 
-.user-actions button.perfil-btn {
-    margin-left: 20px;
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 100px
 }
 
-
-.user-actions button.boton-cerrar {
-    margin-bottom: 0px;
-    margin-left: 00px;
+.product-item {
+    flex: 1 1 30%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
 }

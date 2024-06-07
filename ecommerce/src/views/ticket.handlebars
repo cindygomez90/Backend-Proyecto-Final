@@ -9,52 +9,18 @@
     <div>
         <h2>Ticket de Compra</h2>
         <p><strong>Código:</strong> {{ticket.code}}</p>
-        <p><strong>Fecha y Hora:</strong> {{ticket.purchase_datetime}}</p>
-        <p><strong>Monto Total:</strong> ${{ticket.amount}}</p>
+        <p><strong>Fecha y Hora:</strong> {{ticket.purchase_datetime}}</p>        
         <p><strong>Comprador:</strong> {{ticket.purchaser}}</p>
-        <h3>Productos Comprados</h3>
+        <p><strong>Productos Comprados:</strong>
         <ul>
             {{#each ticket.purchasedProducts}}
                 <li>{{this.title}} - ${{this.price}}</li>
             {{/each}}
         </ul>
-        <button id="pagarBtn">Pagar con Stripe</button>
+        <p><strong>Monto Total:</strong> ${{ticket.amount}}</p>
+        
+        <button onclick="location.href='/products'">Volver al inicio</button>
     </div>
-
-    <script>
-        document.getElementById('pagarBtn').addEventListener('click', function() {
-            const cartId = localStorage.getItem('cid');
-            console.log('Sending cartId:', cartId); 
-
-            fetch('/api/payments/payment-intents', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ cartId })
-            })
-            .then(function(response) {
-                return response.json()
-            })
-            .then(function(data) {
-                if (data.status === 'success') {
-                    const stripe = Stripe('pk_test_51PLTdRP2LrfUAZJs9BEktxs3Y4tyZHmTO1yJhqEUMpD72CzPqTITspoCPuTskP3uAJlXzd8oaa8BtOsLsMdVRBu900E34mQ7XI')
-                    stripe.redirectToCheckout({
-                        sessionId: data.payload.id
-                    }).then(function(result) {
-                        if (result.error) {
-                            alert(result.error.message);
-                        }
-                    });
-                } else {
-                    alert('Error al crear el PaymentIntent');
-                }
-            })
-            .catch(function(error) {
-                console.error('Error al crear el PaymentIntent:', error)
-            })
-        })
-    </script>
 </body>
 </html>
 

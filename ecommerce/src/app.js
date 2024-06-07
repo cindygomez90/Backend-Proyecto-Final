@@ -100,7 +100,7 @@ io.on('connection', async (socket) => {
                 message: data.message
             }
     
-            await messageModel.create(newMessage)    //probar reemplazando por esto: await messageManager.saveMessage(newMessage.user, newMessage.message)
+            await messageModel.create(newMessage)    
     
             io.emit('chat', [newMessage])
         } catch (error) {
